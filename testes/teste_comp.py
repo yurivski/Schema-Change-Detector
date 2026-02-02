@@ -1,1 +1,0 @@
-# Arquivo teste_comp.py criado via script
