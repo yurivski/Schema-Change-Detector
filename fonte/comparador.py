@@ -1,0 +1,1 @@
+# Arquivo comparador.py criado via script

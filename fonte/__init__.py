@@ -1,0 +1,1 @@
+# Arquivo __init__.py criado via script

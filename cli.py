@@ -1,0 +1,1 @@
+# Arquivo cli.py criado via script

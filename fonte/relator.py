@@ -1,0 +1,1 @@
+# Arquivo relator.py criado via script
