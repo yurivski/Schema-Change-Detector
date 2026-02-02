@@ -1,0 +1,1 @@
+# Arquivo teste_capt.py criado via script
