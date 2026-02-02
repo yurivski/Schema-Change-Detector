@@ -1,7 +1,6 @@
 # Conectar no PostgreSQL e extrair as informações completas das tabelas
 
 import os 
-import psycopg2
 import pandas as pd 
 from sqlalchemy import create_engine, inspect
 from dotenv import load_dotenv
@@ -44,7 +43,7 @@ for dados in tabelas:
             'tipo': str(col['type']),
             'not_null': not col['nullable'],
             'default': col.get('default'),
-            'primary_key': nome_col in pk_info,
+            'primary_key': nome_col in pk_info.get('constrained_columns', []),
             'unique': any(nome_col in u['column_names'] for u in unique_constraints),
             #'tamanho_max': getattr(col['type'], 'length', None),
             'foreign_key': fk_info
@@ -62,7 +61,8 @@ for dados in tabelas:
 
 # Salvando a lista nos arquivos json nomeados de acordo com as tabelas:
 salvar_json = 'historico'
-print("\nSalvando dados na pasta - Tenatita: 3 " + "-"*60)
+print("\nSalvando dados na pasta")
+print()
 
 # Iterando pelo dicionário:
 for dados, info_colunas in dicionario.items():
@@ -74,6 +74,6 @@ for dados, info_colunas in dicionario.items():
             # indent=4 deixa o arquivo organizado para leitura humana
             # # ensure_ascii=False permite caracteres especiais (acentos)
             json.dump(info_colunas, f, indent=4, ensure_ascii=False)
-        print(f"Deu bom. Lista de dicionários salvos em: {caminho_arquivo}")
+        print(f"Lista de dicionários salvos em: {caminho_arquivo}")
     except Exception as e:
-        print(f"Deu ruim nas {dados}: {e}")
+        print(f"Erro nos dicionários: {dados}: {e}")

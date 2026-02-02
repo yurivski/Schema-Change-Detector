@@ -1,9 +1,17 @@
 {
-    "capturado_em": "2026-02-02T01:10:27.783372",
-    "nome": "orders",
-    "qtd_colunas": 4,
+    "capturado_em": "2026-02-02T15:57:46.362035",
+    "nome": "categories",
+    "qtd_colunas": 3,
     "colunas": {
-        "order_id": {
+        "category_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": true,
+            "unique": false,
+            "foreign_key": []
+        },
+        "category_department_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
@@ -11,23 +19,7 @@
             "unique": false,
             "foreign_key": []
         },
-        "order_date": {
-            "tipo": "TIMESTAMP",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "order_customer_id": {
-            "tipo": "INTEGER",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "order_status": {
+        "category_name": {
             "tipo": "VARCHAR(45)",
             "not_null": true,
             "default": null,

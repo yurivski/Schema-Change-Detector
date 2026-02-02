@@ -1,0 +1,4 @@
+pandas 
+sqlalchemy
+dotenv
+psycopg2 # Não foi usada mas é importante instalar no ambiente virtual

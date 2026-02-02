@@ -181,6 +181,4 @@ docs/_templates/
 
 .github/workflows/*.local.yml
 
-testes/teste_capt.py
-testes/teste_classific.py
-testes/teste_comp.py
+testes/

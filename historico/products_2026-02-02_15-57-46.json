@@ -1,5 +1,5 @@
 {
-    "capturado_em": "2026-02-02T01:10:27.790613",
+    "capturado_em": "2026-02-02T15:57:46.405718",
     "nome": "products",
     "qtd_colunas": 6,
     "colunas": {
@@ -7,7 +7,7 @@
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
-            "primary_key": false,
+            "primary_key": true,
             "unique": false,
             "foreign_key": []
         },

@@ -1,25 +1,17 @@
 {
-    "capturado_em": "2026-02-02T01:10:27.755547",
-    "nome": "categories",
-    "qtd_colunas": 3,
+    "capturado_em": "2026-02-02T15:57:46.379533",
+    "nome": "departments",
+    "qtd_colunas": 2,
     "colunas": {
-        "category_id": {
+        "department_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
-            "primary_key": false,
+            "primary_key": true,
             "unique": false,
             "foreign_key": []
         },
-        "category_department_id": {
-            "tipo": "INTEGER",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "category_name": {
+        "department_name": {
             "tipo": "VARCHAR(45)",
             "not_null": true,
             "default": null,
