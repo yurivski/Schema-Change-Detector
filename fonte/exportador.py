@@ -20,11 +20,6 @@ inspector = inspect(engine)
 
 
 # Transformando a execução em função reutilizavel para ser importada no arquivo comparador
-"""
-Para um projeto com mais de um arquivo, precisamos criá-los para que a execução do arquivo
-base se transforme em uma função reutilizavel para usar em outro arquivo, 
-caso contrário, o trabalho será grande para refazer.
-"""
 def extrair_metadados(inspector, nome_tabela):
     # dados da tabela
     colunas = inspector.get_columns(nome_tabela)
