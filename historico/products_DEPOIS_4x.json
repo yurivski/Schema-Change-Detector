@@ -1,0 +1,57 @@
+{
+    "capturado_em": "2026-02-03T12:47:12.624577",
+    "tabela": "products",
+    "qtd_colunas": 6,
+    "colunas": {
+        "product_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": true,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_category_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_name": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_description": {
+            "tipo": "VARCHAR(255)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_price": {
+            "tipo": "DOUBLE PRECISION",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_image": {
+            "tipo": "VARCHAR(255)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        }
+    },
+    "indices": [],
+    "constraints_check": []
+}

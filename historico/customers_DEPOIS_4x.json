@@ -1,0 +1,93 @@
+{
+    "capturado_em": "2026-02-03T12:47:12.583296",
+    "tabela": "customers",
+    "qtd_colunas": 10,
+    "colunas": {
+        "customer_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": true,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_fname": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_lname": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_email": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_password": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_street": {
+            "tipo": "VARCHAR(255)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_city": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_state": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "customer_zipcode": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "coluna_teste": {
+            "tipo": "INTEGER",
+            "not_null": false,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        }
+    },
+    "indices": [
+        "idx_cities"
+    ],
+    "constraints_check": [
+        "coluna_teste > 10"
+    ]
+}

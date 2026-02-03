@@ -1,0 +1,35 @@
+{
+    "capturado_em": "2026-02-03T13:06:28.422634",
+    "tabela": "categories",
+    "qtd_colunas": 3,
+    "colunas": {
+        "category_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": true,
+            "unique": false,
+            "foreign_key": []
+        },
+        "category_department_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "category_name": {
+            "tipo": "VARCHAR(45)",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        }
+    },
+    "indices": [],
+    "constraints_check": [
+        []
+    ]
+}

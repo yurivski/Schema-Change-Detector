@@ -1,0 +1,54 @@
+{
+    "capturado_em": "2026-02-03T13:06:28.510669",
+    "tabela": "clientes_teste",
+    "qtd_colunas": 3,
+    "colunas": {
+        "id_teste": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": "nextval('clientes_teste_id_teste_seq'::regclass)",
+            "primary_key": true,
+            "unique": false,
+            "foreign_key": [
+                {
+                    "name": "fk_teste",
+                    "constrained_columns": [
+                        "id_teste"
+                    ],
+                    "referred_schema": null,
+                    "referred_table": "categories",
+                    "referred_columns": [
+                        "category_id"
+                    ],
+                    "options": {},
+                    "comment": null
+                }
+            ]
+        },
+        "nome_teste": {
+            "tipo": "VARCHAR(100)",
+            "not_null": false,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "pontuacao_teste": {
+            "tipo": "INTEGER",
+            "not_null": false,
+            "default": null,
+            "primary_key": false,
+            "unique": true,
+            "foreign_key": []
+        }
+    },
+    "indices": [
+        "idx_nome_teste",
+        "unique_pontuacao"
+    ],
+    "constraints_check": [
+        [
+            "pontuacao_teste > 10"
+        ]
+    ]
+}
