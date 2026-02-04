@@ -1,5 +1,5 @@
 {
-    "capturado_em": "2026-02-03T13:06:28.422634",
+    "capturado_em": "2026-02-04T16:42:18.638729",
     "tabela": "categories",
     "qtd_colunas": 3,
     "colunas": {
@@ -29,7 +29,5 @@
         }
     },
     "indices": [],
-    "constraints_check": [
-        []
-    ]
+    "constraints_check": []
 }

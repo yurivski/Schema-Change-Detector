@@ -1,9 +1,9 @@
 {
-    "capturado_em": "2026-02-03T13:06:28.482828",
-    "tabela": "products",
+    "capturado_em": "2026-02-04T16:42:18.678966",
+    "tabela": "order_items",
     "qtd_colunas": 6,
     "colunas": {
-        "product_id": {
+        "order_item_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
@@ -11,7 +11,7 @@
             "unique": false,
             "foreign_key": []
         },
-        "product_category_id": {
+        "order_item_order_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
@@ -19,23 +19,23 @@
             "unique": false,
             "foreign_key": []
         },
-        "product_name": {
-            "tipo": "VARCHAR(45)",
+        "order_item_product_id": {
+            "tipo": "INTEGER",
             "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "product_description": {
-            "tipo": "VARCHAR(255)",
+        "order_item_quantity": {
+            "tipo": "INTEGER",
             "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "product_price": {
+        "order_item_subtotal": {
             "tipo": "DOUBLE PRECISION",
             "not_null": true,
             "default": null,
@@ -43,8 +43,8 @@
             "unique": false,
             "foreign_key": []
         },
-        "product_image": {
-            "tipo": "VARCHAR(255)",
+        "order_item_product_price": {
+            "tipo": "DOUBLE PRECISION",
             "not_null": true,
             "default": null,
             "primary_key": false,
@@ -53,7 +53,5 @@
         }
     },
     "indices": [],
-    "constraints_check": [
-        []
-    ]
+    "constraints_check": []
 }

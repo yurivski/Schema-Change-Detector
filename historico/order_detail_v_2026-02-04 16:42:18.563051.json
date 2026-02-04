@@ -1,51 +1,51 @@
 {
-    "capturado_em": "2026-02-03T12:47:12.624577",
-    "tabela": "products",
+    "capturado_em": "2026-02-04T16:42:18.725894",
+    "tabela": "order_detail_v",
     "qtd_colunas": 6,
     "colunas": {
-        "product_id": {
+        "order_id": {
             "tipo": "INTEGER",
-            "not_null": true,
-            "default": null,
-            "primary_key": true,
-            "unique": false,
-            "foreign_key": []
-        },
-        "product_category_id": {
-            "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "product_name": {
+        "order_date": {
+            "tipo": "TIMESTAMP",
+            "not_null": false,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "order_customer_id": {
+            "tipo": "INTEGER",
+            "not_null": false,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "order_status": {
             "tipo": "VARCHAR(45)",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "product_description": {
-            "tipo": "VARCHAR(255)",
-            "not_null": true,
+        "order_item_product_id": {
+            "tipo": "INTEGER",
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "product_price": {
+        "order_item_subtotal": {
             "tipo": "DOUBLE PRECISION",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "product_image": {
-            "tipo": "VARCHAR(255)",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,

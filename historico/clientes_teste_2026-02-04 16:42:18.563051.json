@@ -1,5 +1,5 @@
 {
-    "capturado_em": "2026-02-03T13:06:28.510669",
+    "capturado_em": "2026-02-04T16:42:18.741007",
     "tabela": "clientes_teste",
     "qtd_colunas": 3,
     "colunas": {
@@ -47,8 +47,6 @@
         "unique_pontuacao"
     ],
     "constraints_check": [
-        [
-            "pontuacao_teste > 10"
-        ]
+        "pontuacao_teste > 10"
     ]
 }

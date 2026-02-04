@@ -1,51 +1,51 @@
 {
-    "capturado_em": "2026-02-03T12:47:12.634796",
-    "tabela": "order_detail_v",
+    "capturado_em": "2026-02-04T16:42:18.708712",
+    "tabela": "products",
     "qtd_colunas": 6,
     "colunas": {
-        "order_id": {
+        "product_id": {
             "tipo": "INTEGER",
-            "not_null": false,
+            "not_null": true,
             "default": null,
-            "primary_key": false,
+            "primary_key": true,
             "unique": false,
             "foreign_key": []
         },
-        "order_date": {
-            "tipo": "TIMESTAMP",
-            "not_null": false,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "order_customer_id": {
+        "product_category_id": {
             "tipo": "INTEGER",
-            "not_null": false,
+            "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "order_status": {
+        "product_name": {
             "tipo": "VARCHAR(45)",
-            "not_null": false,
+            "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "order_item_product_id": {
-            "tipo": "INTEGER",
-            "not_null": false,
+        "product_description": {
+            "tipo": "VARCHAR(255)",
+            "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,
             "foreign_key": []
         },
-        "order_item_subtotal": {
+        "product_price": {
             "tipo": "DOUBLE PRECISION",
-            "not_null": false,
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "product_image": {
+            "tipo": "VARCHAR(255)",
+            "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,

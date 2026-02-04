@@ -1,5 +1,5 @@
 {
-    "capturado_em": "2026-02-03T13:06:28.434138",
+    "capturado_em": "2026-02-04T16:42:18.652059",
     "tabela": "customers",
     "qtd_colunas": 10,
     "colunas": {
@@ -88,8 +88,6 @@
         "idx_cities"
     ],
     "constraints_check": [
-        [
-            "coluna_teste > 10"
-        ]
+        "coluna_teste > 10"
     ]
 }
