@@ -5,7 +5,7 @@
     "colunas": {
         "category_id": {
             "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": true,
             "unique": false,
@@ -13,7 +13,7 @@
         },
         "category_department_id": {
             "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,

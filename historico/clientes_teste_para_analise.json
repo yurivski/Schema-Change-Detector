@@ -5,7 +5,7 @@
     "colunas": {
         "id_teste": {
             "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": "nextval('clientes_teste_id_teste_seq'::regclass)",
             "primary_key": true,
             "unique": false,
@@ -27,7 +27,7 @@
         },
         "nome_teste": {
             "tipo": "VARCHAR(100)",
-            "not_null": false,
+            "not_null": true,
             "default": null,
             "primary_key": false,
             "unique": false,

@@ -11,14 +11,6 @@
             "unique": false,
             "foreign_key": []
         },
-        "customer_fname": {
-            "tipo": "VARCHAR(45)",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
         "customer_lname": {
             "tipo": "VARCHAR(45)",
             "not_null": true,
