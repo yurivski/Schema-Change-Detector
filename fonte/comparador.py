@@ -37,7 +37,7 @@ def analisar_mudancas(colunas_antigas, colunas_novas):
         "adicionadas": list(adicionadas)
     }
 
-def comparar(colunas_antigas, colunas_novas, nome_coluna):
+def comparar(colunas_antigas, colunas_novas):
     mudancas = []
     comparar_campos = ['tipo', 'not_null', 'default', 'primary_key', 'unique', 'foreign_key']
 
@@ -48,7 +48,7 @@ def comparar(colunas_antigas, colunas_novas, nome_coluna):
         if v_antigo != v_novo:
             mudancas.append({
                 'tipo': 'type_changed' if campo == 'tipo' else 'property_changed',  
-                'coluna': nome_coluna,
+                'coluna': comparar_campos,
                 'campo': campo,
                 'valor_antigo': v_antigo,
                 'valor_novo': v_novo
@@ -66,8 +66,7 @@ def comparar_jsons(antigo, novo):
     lista_mudancas = []
     analise = analisar_mudancas(
     dados_antes['colunas'],
-    dados_depois['colunas'],
-    prefixo
+    dados_depois['colunas']
 )
 
 
@@ -87,9 +86,9 @@ def comparar_jsons(antigo, novo):
             'valor_antigo': 'existente',
             'valor_novo': None
         })
-    mapeamento = analise['mapeamento_novo']
+
     for col in analise['comuns']:
-        detalhes = comparar(dados_antes['colunas'][col], dados_depois['colunas'][mapeamento[col]], col)
+        detalhes = comparar(dados_antes['colunas'], dados_depois['colunas'])
         lista_mudancas.extend(detalhes)
     return lista_mudancas
 
