@@ -1,8 +1,6 @@
 """
 Arquivo que irá comparar os metadados e identificar se houve alteração, 
-qual, quando e onde. 
-
-Não finalizado
+qual, quando e onde.
 """
 
 import os
@@ -37,7 +35,7 @@ def analisar_mudancas(colunas_antigas, colunas_novas):
         "adicionadas": list(adicionadas)
     }
 
-def comparar(colunas_antigas, colunas_novas):
+def comparar(colunas_antigas, colunas_novas, nome_coluna):
     mudancas = []
     comparar_campos = ['tipo', 'not_null', 'default', 'primary_key', 'unique', 'foreign_key']
 
@@ -48,7 +46,7 @@ def comparar(colunas_antigas, colunas_novas):
         if v_antigo != v_novo:
             mudancas.append({
                 'tipo': 'type_changed' if campo == 'tipo' else 'property_changed',  
-                'coluna': comparar_campos,
+                'coluna': nome_coluna,
                 'campo': campo,
                 'valor_antigo': v_antigo,
                 'valor_novo': v_novo
@@ -69,12 +67,12 @@ def comparar_jsons(antigo, novo):
     dados_depois['colunas']
 )
 
-
+    # Mensagem de alterações nas colunas: (existente para None = coluna removida)
     for col in analise['adicionadas']:
         lista_mudancas.append({
             'tipo': 'column_added',
             'coluna': col,
-            'campo': 'presenca',
+            'campo': 'alteracao',
             'valor_antigo': None,
             'valor_novo': 'adicionado'
         })
@@ -82,13 +80,13 @@ def comparar_jsons(antigo, novo):
         lista_mudancas.append({
             'tipo': 'column_removed',
             'coluna': col,
-            'campo': 'presenca',
+            'campo': 'alteracao',
             'valor_antigo': 'existente',
             'valor_novo': None
         })
 
     for col in analise['comuns']:
-        detalhes = comparar(dados_antes['colunas'], dados_depois['colunas'])
+        detalhes = comparar(dados_antes['colunas'][col], dados_depois['colunas'][col], col)
         lista_mudancas.extend(detalhes)
     return lista_mudancas
 

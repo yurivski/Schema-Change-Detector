@@ -1,9 +1,9 @@
 {
-    "capturado_em": "2026-02-05T21:28:03.856987",
-    "tabela": "orders",
-    "qtd_colunas": 4,
+    "capturado_em": "2026-02-05T22:27:51.719726",
+    "tabela": "order_items",
+    "qtd_colunas": 6,
     "colunas": {
-        "order_id": {
+        "order_item_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
@@ -11,15 +11,7 @@
             "unique": false,
             "foreign_key": []
         },
-        "order_date": {
-            "tipo": "TIMESTAMP",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "order_customer_id": {
+        "order_item_order_id": {
             "tipo": "INTEGER",
             "not_null": true,
             "default": null,
@@ -27,8 +19,32 @@
             "unique": false,
             "foreign_key": []
         },
-        "order_status": {
-            "tipo": "VARCHAR(45)",
+        "order_item_product_id": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "order_item_quantity": {
+            "tipo": "INTEGER",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "order_item_subtotal": {
+            "tipo": "DOUBLE PRECISION",
+            "not_null": true,
+            "default": null,
+            "primary_key": false,
+            "unique": false,
+            "foreign_key": []
+        },
+        "order_item_product_price": {
+            "tipo": "DOUBLE PRECISION",
             "not_null": true,
             "default": null,
             "primary_key": false,
