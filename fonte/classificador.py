@@ -31,8 +31,7 @@ def classificar_mudanca(antigo, novo):
     if not antigo.get('foreign_key') and novo.get('foreign_key'):
         return "WARNING: FOREIGN KEY adicionada"
 
-antigo = {"tipo": "VARCHAR", "not_null": True}
-novo = None
+    return "Sem mudanças"
 
 if __name__ == "__main__":
 
