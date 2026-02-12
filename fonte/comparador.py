@@ -7,6 +7,7 @@ import os
 import json
 import glob
 from exportador import extrair_metadados
+from classificador import classificar_mudanca
 
 def carregar_json(caminho_arquivo):
     try:
@@ -94,6 +95,14 @@ def exibir_mudancas(mudancas):
     adicionadas = [m for m in mudancas if m['tipo'] == 'column_added']
     removidas = [m for m in mudancas if m['tipo'] == 'column_removed']
     modificadas = [m for m in mudancas if m['tipo'] in ['type_changed', 'property_changed']]
+
+    for m in removidas:
+        classificacao = classificar_mudanca(
+            {'tipo': 'VARCHAR', 'not_null': True}, 
+            None
+            )
+
+    print(f"{m['coluna']}: {classificacao}")
 
     print("\nMUDANÇAS DETECTADAS!")
     print(f"Adicionadas: {len(adicionadas)} | Removidas: {len(removidas)} | Modificadas: {len(modificadas)}")
