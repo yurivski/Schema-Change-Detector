@@ -10,33 +10,33 @@ def classificar_mudanca(antigo, novo):
     elif 'default' in novo:
         return "SAFE: DEFAULT adicionado em coluna nova"
         
-    if antigo is None and novo is not None:
-            return "BREAKING: Coluna removida"
-
     elif antigo is not None and novo is None:
-            return "BREAKING: Coluna removida"
+        return "BREAKING: Coluna removida"
 
-    elif antigo is not None and novo is not None:
-            return "BREAKING: Tipo de dado mudou"
+    if antigo['tipo'] != novo['tipo']:
+        return "BREAKING: Tipo de dado mudou"
 
-    if not antigo.get('not_null', False) and novo.get('not_null', True):
-            return "BREAKING: NOT NULL adicionado em coluna existente"
+    if not antigo.get('not_null') and novo.get('not_null'):
+        return "BREAKING: NOT NULL adicionado em coluna existente"
 
     if antigo.get('primary_key') != novo.get('primary_key'):
-            return "BREAKING: PRIMARY KEY mudou"
+        return "BREAKING: PRIMARY KEY adicionado"
 
     if antigo.get('default') != novo.get('default'):
-            return "BREAKING: DEFAULT VALUE mudou"
+        return "BREAKING: DEFAULT VALUE mudou"
 
     if antigo.get('not_null') == True and novo.get('not_null') == False:
-            return "WARNING: NOT NULL removido"
+        return "WARNING: NOT NULL removido"
 
     if not antigo.get('foreign_key') and novo.get('foreign_key'):
-            return "WARNING: FOREIGN KEY adicionada"
+        return "WARNING: FOREIGN KEY adicionada"
+
+antigo = {"tipo": "VARCHAR", "not_null": True}
+novo = None
 
 if __name__ == "__main__":
 
-    colunas_v1 = {"tipo": "VARCHAR", "tamanho": 100, "null": True}
-    colunas_v2 = {"tipo": "VARCHAR", "tamanho": 45, "null": True}
+    colunas_v1 = {"tipo": "VARCHAR", "tamanho": 100, "not_null": True}
+    colunas_v2 = {"tipo": "VARCHAR", "tamanho": 45, "not_null": True}
 
     print(classificar_mudanca(colunas_v1, colunas_v2))
