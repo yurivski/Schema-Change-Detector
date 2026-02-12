@@ -1,7 +1,6 @@
 import os
 import json
 import glob
-from comparador import comparar
 
 def classificar_mudanca(antigo, novo):
     if antigo is None and novo is not None:

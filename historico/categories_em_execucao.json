@@ -11,14 +11,6 @@
             "unique": false,
             "foreign_key": []
         },
-        "category_department_id": {
-            "tipo": "INTEGER",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
         "category_name": {
             "tipo": "VARCHAR(45)",
             "not_null": true,

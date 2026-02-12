@@ -96,19 +96,19 @@ def exibir_mudancas(mudancas):
     removidas = [m for m in mudancas if m['tipo'] == 'column_removed']
     modificadas = [m for m in mudancas if m['tipo'] in ['type_changed', 'property_changed']]
 
-    for m in removidas:
-        classificacao = classificar_mudanca(
-            {'tipo': 'VARCHAR', 'not_null': True}, 
-            None
-            )
-
-    print(f"{m['coluna']}: {classificacao}")
-
-    print("\nMUDANÇAS DETECTADAS!")
+    print("\nMUDANÇAS DETECTADAS:")
     print(f"Adicionadas: {len(adicionadas)} | Removidas: {len(removidas)} | Modificadas: {len(modificadas)}")
     
+    # Exibe colunas adicionadas
+    for m in adicionadas:
+        print(f" • {m['coluna']}: SAFE - Coluna adicionada")
+
     for m in removidas:
-        print(f" • {m['coluna']} - {m['campo']}: {m['valor_antigo']} para {m['valor_novo']}")
+        print(f" • {m['coluna']}: BREAKING - Coluna removida")
+
+    for m in modificadas:
+        print(f" • {m['coluna']} - {m['campo']}: de {m['valor_novo']} para {m['valor_antigo']}") 
+
 
 def teste_comparacao():
     pasta = 'historico'
