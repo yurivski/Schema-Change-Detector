@@ -19,22 +19,6 @@
             "unique": false,
             "foreign_key": []
         },
-        "customer_lname": {
-            "tipo": "VARCHAR(45)",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "customer_email": {
-            "tipo": "VARCHAR(45)",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
         "customer_password": {
             "tipo": "VARCHAR(45)",
             "not_null": true,

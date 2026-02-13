@@ -99,7 +99,7 @@ def exibir_mudancas(mudancas):
     print("\nMUDANÇAS DETECTADAS:")
     print(f"Adicionadas: {len(adicionadas)} | Removidas: {len(removidas)} | Modificadas: {len(modificadas)}")
     
-    # Exibe colunas adicionadas
+    # Exibe colunas adicionadas, removidas e modificadas
     for m in adicionadas:
         print(f" • {m['coluna']}: SAFE - Coluna adicionada")
 
@@ -107,7 +107,7 @@ def exibir_mudancas(mudancas):
         print(f" • {m['coluna']}: BREAKING - Coluna removida")
 
     for m in modificadas:
-        print(f" • {m['coluna']} - {m['campo']}: de {m['valor_novo']} para {m['valor_antigo']}") 
+        print(f" • {m['coluna']} - {m['campo']}: de {m['valor_antigo']} para {m['valor_novo']}") 
 
 
 def teste_comparacao():
@@ -128,7 +128,7 @@ def teste_comparacao():
         if os.path.exists(caminho_depois):
             print(f"\nTabela {nome_tabela.upper()}")
 
-            resultado = comparar_jsons(caminho_antes, caminho_depois)
+            resultado = comparar_jsons(caminho_depois, caminho_antes)
 
             if isinstance(resultado, list):
                 exibir_mudancas(resultado)
