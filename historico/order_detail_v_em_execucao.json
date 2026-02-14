@@ -13,17 +13,9 @@
         },
         "order_date": {
             "tipo": "TIMESTAMP",
-            "not_null": false,
+            "not_null": true,
             "default": null,
-            "primary_key": false,
-            "unique": false,
-            "foreign_key": []
-        },
-        "order_customer_id": {
-            "tipo": "INTEGER",
-            "not_null": false,
-            "default": null,
-            "primary_key": false,
+            "primary_key": true,
             "unique": false,
             "foreign_key": []
         },

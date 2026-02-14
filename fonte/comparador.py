@@ -107,8 +107,40 @@ def exibir_mudancas(mudancas):
         print(f" • {m['coluna']}: BREAKING - Coluna removida")
 
     for m in modificadas:
-        print(f" • {m['coluna']} - {m['campo']}: de {m['valor_antigo']} para {m['valor_novo']}") 
-
+    # Lógica de classificação inline:
+    
+        if m['campo'] == 'tipo':
+            classificacao = "BREAKING: Tipo mudou"
+        
+        elif m['campo'] == 'not_null':
+            if m['valor_antigo'] == False and m['valor_novo'] == True:
+                classificacao = "BREAKING: NOT NULL adicionado"
+            elif m['valor_antigo'] == True and m['valor_novo'] == False:
+                classificacao = "WARNING: NOT NULL removido"
+            else:
+                classificacao = "Modificação em NOT NULL"
+        
+        elif m['campo'] == 'primary_key':
+            classificacao = "BREAKING: PRIMARY KEY mudou"
+        
+        elif m['campo'] == 'default':
+            classificacao = "BREAKING: DEFAULT VALUE mudou"
+        
+        elif m['campo'] == 'foreign_key':
+            # Verifica se FK foi adicionada (de vazio para preenchido)
+            if not m['valor_antigo'] and m['valor_novo']:
+                classificacao = "WARNING: FOREIGN KEY adicionada"
+            else:
+                classificacao = "BREAKING: FOREIGN KEY mudou"
+        
+        elif m['campo'] == 'unique':
+            classificacao = "WARNING: Constraint UNIQUE mudou"
+        
+        else:
+            classificacao = "Mudança detectada"
+        
+        # Exibir com classificação:
+        print(f" • {m['coluna']} ({classificacao}): {m['campo']} de {m['valor_antigo']} para {m['valor_novo']}")
 
 def teste_comparacao():
     pasta = 'historico'

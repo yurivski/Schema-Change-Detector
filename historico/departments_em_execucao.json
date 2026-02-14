@@ -5,17 +5,9 @@
     "colunas": {
         "department_id": {
             "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": true,
-            "unique": false,
-            "foreign_key": []
-        },
-        "department_name": {
-            "tipo": "VARCHAR(45)",
-            "not_null": true,
-            "default": null,
-            "primary_key": false,
             "unique": false,
             "foreign_key": []
         }
