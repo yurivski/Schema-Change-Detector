@@ -8,6 +8,7 @@ import json
 import glob
 from exportador import extrair_metadados
 from relatorio import gerar_relatorio_html
+from relatorio import salvar_relatorio
 
 def carregar_json(caminho_arquivo):
     try:
@@ -142,10 +143,6 @@ def exibir_mudancas(mudancas):
         # Exibir com classificação:
         print(f" • {m['coluna']} ({classificacao}): {m['campo']} de {m['valor_antigo']} para {m['valor_novo']}")
 
-        html = gerar_relatorio_html(resultado, nome_tabela)
-        salvar_relatorio(html, f"relatorios/relatorio_{nome_tabela}.html")
-        print(f"Relatório gerado: relatorios/relatorio_{nome_tabela}.html")
-
 def teste_comparacao():
     pasta = 'historico'
     padrao = os.path.join(pasta, "*em_execucao.json")
@@ -168,10 +165,12 @@ def teste_comparacao():
 
             if isinstance(resultado, list):
                 exibir_mudancas(resultado)
+
+                html = gerar_relatorio_html(resultado, nome_tabela)
+                caminho = salvar_relatorio(html, nome_tabela)
+                print(f"Relatório HTML: {caminho}")
             else:
                 print(f"Erro: {resultado}")
-        else:
-            print(f"\nPar 'depois' não encontrado para {caminho_antes}")
 
 if __name__ == "__main__":
     teste_comparacao()

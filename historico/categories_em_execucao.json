@@ -8,12 +8,12 @@
             "not_null": true,
             "default": null,
             "primary_key": true,
-            "unique": false,
+            "unique": true,
             "foreign_key": []
         },
         "category_department_id": {
             "tipo": "INTEGER",
-            "not_null": true,
+            "not_null": false,
             "default": null,
             "primary_key": false,
             "unique": false,

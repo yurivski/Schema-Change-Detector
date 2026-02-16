@@ -1,1 +1,0 @@
-# Arquivo mudancas.py criado via script

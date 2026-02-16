@@ -29,8 +29,8 @@
             "tipo": "VARCHAR(100)",
             "not_null": false,
             "default": null,
-            "primary_key": false,
-            "unique": false,
+            "primary_key": true,
+            "unique": true,
             "foreign_key": []
         },
         "pontuacao_teste": {

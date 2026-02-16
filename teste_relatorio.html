@@ -1,32 +1,181 @@
-
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Relatório - TESTE_TABLE</title>
-        <style>
-            /* CSS aqui - Tarefa 2 */
-        </style>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schema Change Report - TESTE_TABLE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        .metadata {
+            color: #718096;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+        
+        .metadata strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .summary {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+            cursor: default;
+        }
+        
+        .badge:hover {
+            transform: translateY(-2px);
+        }
+        
+        .badge-number {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .badge.breaking {
+            background: #fc8181;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+        
+        .badge.warning {
+            background: #fbd38d;
+            color: #744210;
+            border: 2px solid #f6ad55;
+        }
+        
+        .badge.safe {
+            background: #9ae6b4;
+            color: #22543d;
+            border: 2px solid #68d391;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            header {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .badges {
+                flex-direction: column;
+            }
+            
+            .badge {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
         <header>
-            <h1>Schema Change Report</h1>
-            <p>Tabela: TESTE_TABLE</p>
-            <p>Gerado em: 16/02/2026 14:53:44</p>
+            <h1><span class="emoji">📊</span> Schema Change Report</h1>
+            <div class="metadata">
+                <p><strong>Tabela:</strong> TESTE_TABLE</p>
+                <p><strong>Gerado em:</strong> 16/02/2026 20:18:05</p>
+            </div>
         </header>
         
         <section class="summary">
-            <h2>Resumo</h2>
+            <h2>Resumo das Mudanças</h2>
             <div class="badges">
-                <span class="badge breaking">0 BREAKING</span>
-                <span class="badge warning">0 WARNING</span>
-                <span class="badge safe">0 SAFE</span>
+                <div class="badge breaking">
+                    <span class="badge-number">1</span>
+                    <span>BREAKING CHANGES</span>
+                </div>
+                <div class="badge warning">
+                    <span class="badge-number">0</span>
+                    <span>WARNINGS</span>
+                </div>
+                <div class="badge safe">
+                    <span class="badge-number">0</span>
+                    <span>SAFE CHANGES</span>
+                </div>
             </div>
         </section>
         
-        <!-- Tarefa 4: Tabelas aqui -->
-        
-    </body>
-    </html>
-    
+        <footer class="footer">
+            <p>Gerado por Schema Change Detector v1.0</p>
+            <p>Desenvolvido por Yuri</p>
+        </footer>
+    </div>
+</body>
+</html>
