@@ -7,7 +7,7 @@ import os
 import json
 import glob
 from exportador import extrair_metadados
-from classificador import classificar_mudanca
+from relatorio import gerar_relatorio_html
 
 def carregar_json(caminho_arquivo):
     try:
@@ -141,6 +141,10 @@ def exibir_mudancas(mudancas):
         
         # Exibir com classificação:
         print(f" • {m['coluna']} ({classificacao}): {m['campo']} de {m['valor_antigo']} para {m['valor_novo']}")
+
+        html = gerar_relatorio_html(resultado, nome_tabela)
+        salvar_relatorio(html, f"relatorios/relatorio_{nome_tabela}.html")
+        print(f"Relatório gerado: relatorios/relatorio_{nome_tabela}.html")
 
 def teste_comparacao():
     pasta = 'historico'
