@@ -18,7 +18,7 @@ conn_str = f'postgresql://{user}:{password}@{host}/{database}'
 engine = create_engine(conn_str)
 inspector = inspect(engine)
 
-
+# Funções para gerar relatório HTML
 def extrair_metadados(inspector, nome_tabela):
     """
     Extrai os metadados das colunas das tabelas do banco de dados PostgreSQL.
@@ -49,7 +49,6 @@ def extrair_metadados(inspector, nome_tabela):
             'foreign_key': [fk for fk in fk_info if nome_col in fk['constrained_columns']]
         }
 
-
     return {
         'capturado_em': datetime.now().isoformat(),
         'tabela': nome_tabela,
@@ -58,8 +57,9 @@ def extrair_metadados(inspector, nome_tabela):
         'indices': [idx['name'] for idx in indices],
         'constraints_check': [c['sqltext'] for c in check_constraints]
 
-    }    
+    }
 
+# Função para salvar os metadados extraídos em arquivos JSON
 def salvar_json(tabelas, diretorio='historico', sufixo=None):
 
     if sufixo is None:

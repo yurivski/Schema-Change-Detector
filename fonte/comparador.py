@@ -22,7 +22,7 @@ def carregar_json(caminho_arquivo):
         print (f"Deu erro: {e}")
         return None
 
-
+# Função para analisar as mudanças entre os metadados antigos e novos
 def analisar_mudancas(colunas_antigas, colunas_novas):
     antigas_keys = set(colunas_antigas.keys())
     novas_keys = set(colunas_novas.keys())
@@ -37,6 +37,7 @@ def analisar_mudancas(colunas_antigas, colunas_novas):
         "adicionadas": list(adicionadas)
     }
 
+# Gerar relatório HTML para uma tabela específica
 def comparar(colunas_antigas, colunas_novas, nome_coluna):
     mudancas = []
     comparar_campos = ['tipo', 'not_null', 'default', 'primary_key', 'unique', 'foreign_key']
@@ -54,7 +55,6 @@ def comparar(colunas_antigas, colunas_novas, nome_coluna):
                 'valor_novo': v_novo
 
             })
-
     return mudancas
 
 def comparar_jsons(antigo, novo):
@@ -92,6 +92,7 @@ def comparar_jsons(antigo, novo):
         lista_mudancas.extend(detalhes)
     return lista_mudancas
 
+# Classifica as mudanças em breaking, warning e safe
 def exibir_mudancas(mudancas):
     adicionadas = [m for m in mudancas if m['tipo'] == 'column_added']
     removidas = [m for m in mudancas if m['tipo'] == 'column_removed']
@@ -153,7 +154,7 @@ def teste_comparacao():
         return
 
     print(f"Iniciando verificacao em: {pasta}")
-
+    # Para cada arquivo 'em_execucao.json', encontra o correspondente 'para_analise.json' e compara
     for caminho_antes in arquivo_antes:
         caminho_depois = caminho_antes.replace("em_execucao.json", "para_analise.json")
         nome_tabela = os.path.basename(caminho_antes).replace("_em_execucao.json", "")
