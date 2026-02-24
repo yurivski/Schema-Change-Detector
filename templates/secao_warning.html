@@ -1,0 +1,21 @@
+<!--
+    Template para a seção de Warnings do relatório de mudanças de esquema.
+    Esta seção lista as mudanças que são consideradas "warnings", ou seja, mudanças que podem causar problemas, mas não são necessariamente breaking changes.
+    O template é renderizado com os dados específicos de cada tabela, incluindo o número total de warnings e as linhas detalhadas para cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title warning">Warnings ({{count}})</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{linhas}}
+        </tbody>
+    </table>
+</div>

@@ -1,1 +1,11 @@
-<!-- TODO: designe do relatório das tabelas do banco de dados: nome da tabela, estatística e paceholders para as seções de mudanças -->
+<div class="table-section">
+    <div class="table-header">
+        {{nome_tabela}}
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> {{breaking}}</div>
+        <div class="table-stat"><strong>Warnings:</strong> {{warning}}</div>
+        <div class="table-stat"><strong>Safe:</strong> {{safe}}</div>
+    </div>
+    {{secoes_html}}
+</div>

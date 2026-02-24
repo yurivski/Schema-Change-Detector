@@ -1,0 +1,21 @@
+<!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes ({{count}})</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{linhas}}
+        </tbody>
+    </table>
+</div>
