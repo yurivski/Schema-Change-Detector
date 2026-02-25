@@ -6,9 +6,9 @@ qual, quando e onde.
 import os
 import json
 import glob
+import sqlalchemy
 from exportador import extrair_metadados
-from relatorio import gerar_relatorio_html
-from relatorio import salvar_relatorio
+from relatorio import gerar_relatorio_consolidado, salvar_relatorio
 
 def carregar_json(caminho_arquivo):
     try:
@@ -153,25 +153,33 @@ def teste_comparacao():
         print(f"Nenhum arquivo 'em_execucao.json' encontrado na pasta '{pasta}'")
         return
 
-    print(f"Iniciando verificacao em: {pasta}")
-    # Para cada arquivo 'em_execucao.json', encontra o correspondente 'para_analise.json' e compara
+    print(f"Iniciando verificacao em: {pasta}\n")
+
+    # Dicionário para armazenar mudanças de todas as tabelas
+    todas_mudancas = {}
+
     for caminho_antes in arquivo_antes:
         caminho_depois = caminho_antes.replace("em_execucao.json", "para_analise.json")
         nome_tabela = os.path.basename(caminho_antes).replace("_em_execucao.json", "")
         
         if os.path.exists(caminho_depois):
-            print(f"\nTabela {nome_tabela.upper()}")
+            print(f"Tabela {nome_tabela.upper()}")
 
             resultado = comparar_jsons(caminho_depois, caminho_antes)
 
             if isinstance(resultado, list):
                 exibir_mudancas(resultado)
-
-                html = gerar_relatorio_html(resultado, nome_tabela)
-                caminho = salvar_relatorio(html, nome_tabela)
-                print(f"Relatório HTML: {caminho}")
+                
+                # Armazenar mudanças da tabela
+                todas_mudancas[nome_tabela] = resultado
             else:
                 print(f"Erro: {resultado}")
+        else:
+            print(f"Par 'depois' não encontrado para {caminho_antes}")
+    
+    html = gerar_relatorio_consolidado(todas_mudancas)
+    caminho = salvar_relatorio(html)
+    print(f"\nRelatório HTML Consolidado: {caminho}")
 
 if __name__ == "__main__":
     teste_comparacao()
