@@ -1,0 +1,636 @@
+<!-- Arquivo destinado a todo o CSS, cabeçalho, rodpé e placeholders -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schema Change Report - Todas as Tabelas</title>
+    <!-- Estilos CSS para o relatório -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .metadata {
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        
+        .stat-card.breaking {
+            border-color: #e53e3e;
+            background: #fff5f5;
+        }
+        
+        .stat-card.warning {
+            border-color: #dd6b20;
+            background: #fffaf0;
+        }
+        
+        .stat-card.safe {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card.breaking .stat-number {
+            color: #e53e3e;
+        }
+        
+        .stat-card.warning .stat-number {
+            color: #dd6b20;
+        }
+        
+        .stat-card.safe .stat-number {
+            color: #38a169;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .table-section {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        .table-stats {
+            background: #f7fafc;
+            padding: 15px 25px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .table-stat {
+            font-size: 0.9em;
+        }
+        
+        .table-stat strong {
+            font-weight: 600;
+        }
+        
+        .section {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            padding: 20px 25px;
+            margin: 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .section-title.breaking {
+            background: #fff5f5;
+            color: #c53030;
+        }
+        
+        .section-title.warning {
+            background: #fffaf0;
+            color: #c05621;
+        }
+        
+        .section-title.safe {
+            background: #f0fff4;
+            color: #276749;
+        }
+        
+        .changes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .changes-table th {
+            background: #f7fafc;
+            padding: 15px 25px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .changes-table td {
+            padding: 15px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .changes-table tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .changes-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        code {
+            background: #edf2f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #2d3748;
+        }
+        
+        .badge-breaking,
+        .badge-warning,
+        .badge-safe {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-breaking {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .badge-warning {
+            background: #feebc8;
+            color: #c05621;
+        }
+        
+        .badge-safe {
+            background: #c6f6d5;
+            color: #276749;
+        }
+        
+        .no-changes {
+            padding: 40px 25px;
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .changes-table {
+                font-size: 0.9em;
+            }
+            
+            .changes-table th,
+            .changes-table td {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+    <!-- Scripts JS para interatividade (se necessário) -->
+</head>
+<body>
+    <div class="header">
+        <h1>Schema Change Report - Todas as Tabelas</h1>
+        <div class="metadata">
+            <strong>Banco:</strong> PostgreSQL | 
+            <strong>Gerado em:</strong> 25/02/2026 às 13:56:11
+        </div>
+    </div>
+    <!-- Placeholder para o conteúdo dinâmico das tabelas e seções -->
+    <div class="container">
+        <div class="overview">
+            <div class="stat-card breaking">
+                <div class="stat-number">10</div>
+                <div class="stat-label">Breaking Changes</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Warnings</div>
+            </div>
+            <div class="stat-card safe">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Safe Changes</div>
+            </div>
+        </div>
+        
+        <div class="table-section">
+    <div class="table-header">
+        CATEGORIES
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> 2</div>
+        <div class="table-stat"><strong>Warnings:</strong> 1</div>
+        <div class="table-stat"><strong>Safe:</strong> 1</div>
+    </div>
+    <!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes (2)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>category_name</code></td>
+                    <td><span class="badge-breaking">Coluna Removida</span></td>
+                    <td>Existente</td>
+                    <td>—</td>
+                </tr>
+            
+                <tr>
+                    <td><code>category_id</code></td>
+                    <td><span class="badge-breaking">NOT NULL Adicionado</span></td>
+                    <td>NULL permitido</td>
+                    <td>NOT NULL</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div><!--
+    Template para a seção de Warnings do relatório de mudanças de esquema.
+    Esta seção lista as mudanças que são consideradas "warnings", ou seja, mudanças que podem causar problemas, mas não são necessariamente breaking changes.
+    O template é renderizado com os dados específicos de cada tabela, incluindo o número total de warnings e as linhas detalhadas para cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title warning">Warnings (1)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>category_id</code></td>
+                    <td><span class="badge-warning">UNIQUE Mudou</span></td>
+                    <td>False</td>
+                    <td>True</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div><!-- Template para a seção de Safe Changes do relatório de mudanças de esquema. -->
+
+<div class="section">
+    <h3 class="section-title safe">Safe Changes (1)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Detalhes</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td><code>category_teste_id</code></td>
+                <td><span class="badge-safe">Coluna Adicionada</span></td>
+                <td>Nova coluna adicionada</td>
+            </tr>
+        
+        </tbody>
+    </table>
+</div>
+</div><div class="table-section">
+    <div class="table-header">
+        CLIENTES_TESTE
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> 2</div>
+        <div class="table-stat"><strong>Warnings:</strong> 2</div>
+        <div class="table-stat"><strong>Safe:</strong> 0</div>
+    </div>
+    <!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes (2)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>id_teste</code></td>
+                    <td><span class="badge-breaking">NOT NULL Adicionado</span></td>
+                    <td>NULL permitido</td>
+                    <td>NOT NULL</td>
+                </tr>
+            
+                <tr>
+                    <td><code>nome_teste</code></td>
+                    <td><span class="badge-breaking">Primary Key Mudou</span></td>
+                    <td>False</td>
+                    <td>True</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div><!--
+    Template para a seção de Warnings do relatório de mudanças de esquema.
+    Esta seção lista as mudanças que são consideradas "warnings", ou seja, mudanças que podem causar problemas, mas não são necessariamente breaking changes.
+    O template é renderizado com os dados específicos de cada tabela, incluindo o número total de warnings e as linhas detalhadas para cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title warning">Warnings (2)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>nome_teste</code></td>
+                    <td><span class="badge-warning">NOT NULL Removido</span></td>
+                    <td>NOT NULL</td>
+                    <td>NULL permitido</td>
+                </tr>
+            
+                <tr>
+                    <td><code>nome_teste</code></td>
+                    <td><span class="badge-warning">UNIQUE Mudou</span></td>
+                    <td>False</td>
+                    <td>True</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div>
+</div><div class="table-section">
+    <div class="table-header">
+        CUSTOMERS
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> 2</div>
+        <div class="table-stat"><strong>Warnings:</strong> 0</div>
+        <div class="table-stat"><strong>Safe:</strong> 0</div>
+    </div>
+    <!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes (2)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>customer_email</code></td>
+                    <td><span class="badge-breaking">Coluna Removida</span></td>
+                    <td>Existente</td>
+                    <td>—</td>
+                </tr>
+            
+                <tr>
+                    <td><code>customer_lname</code></td>
+                    <td><span class="badge-breaking">Coluna Removida</span></td>
+                    <td>Existente</td>
+                    <td>—</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div>
+</div><div class="table-section">
+    <div class="table-header">
+        DEPARTMENTS
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> 1</div>
+        <div class="table-stat"><strong>Warnings:</strong> 1</div>
+        <div class="table-stat"><strong>Safe:</strong> 0</div>
+    </div>
+    <!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes (1)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>department_name</code></td>
+                    <td><span class="badge-breaking">Coluna Removida</span></td>
+                    <td>Existente</td>
+                    <td>—</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div><!--
+    Template para a seção de Warnings do relatório de mudanças de esquema.
+    Esta seção lista as mudanças que são consideradas "warnings", ou seja, mudanças que podem causar problemas, mas não são necessariamente breaking changes.
+    O template é renderizado com os dados específicos de cada tabela, incluindo o número total de warnings e as linhas detalhadas para cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title warning">Warnings (1)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>department_id</code></td>
+                    <td><span class="badge-warning">NOT NULL Removido</span></td>
+                    <td>NOT NULL</td>
+                    <td>NULL permitido</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div>
+</div><div class="table-section">
+    <div class="table-header">
+        ORDER_DETAIL_V
+    </div>
+    <div class="table-stats">
+        <div class="table-stat"><strong>Breaking:</strong> 3</div>
+        <div class="table-stat"><strong>Warnings:</strong> 0</div>
+        <div class="table-stat"><strong>Safe:</strong> 0</div>
+    </div>
+    <!--
+    Template para a seção de Breaking Changes do relatório.
+    Esta seção destaca as mudanças que podem causar falhas ou interrupções no sistema.
+    O título da seção é estilizado para chamar a atenção, e a tabela apresenta detalhes sobre cada mudança. -->
+
+<div class="section">
+    <h3 class="section-title breaking">Breaking Changes (3)</h3>
+    <table class="changes-table">
+        <thead>
+            <tr>
+                <th>Coluna</th>
+                <th>Tipo de Mudança</th>
+                <th>Antes</th>
+                <th>Depois</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td><code>order_customer_id</code></td>
+                    <td><span class="badge-breaking">Coluna Removida</span></td>
+                    <td>Existente</td>
+                    <td>—</td>
+                </tr>
+            
+                <tr>
+                    <td><code>order_date</code></td>
+                    <td><span class="badge-breaking">NOT NULL Adicionado</span></td>
+                    <td>NULL permitido</td>
+                    <td>NOT NULL</td>
+                </tr>
+            
+                <tr>
+                    <td><code>order_date</code></td>
+                    <td><span class="badge-breaking">Primary Key Mudou</span></td>
+                    <td>False</td>
+                    <td>True</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</div>
+</div>
+    </div>
+    <!-- Rodapé do relatório -->
+    <div class="footer">
+        <p><strong>Schema Change Detector</strong> | Desenvolvido por Yuri Pontes</p>
+    </div>
+</body>
+</html>

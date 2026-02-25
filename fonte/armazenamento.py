@@ -1,1 +1,0 @@
-# Arquivo armazenamento.py criado via script

@@ -1,8 +1,6 @@
 """
 Script simples que escrevi para criar todas as pastas e arquivos do projeto
 automaticamente. É muito chato ficar criando pastas e arquivos um por um. 
-
-(Deus abençoe Alan Turing, Ada Lovelace e Dennis Ritchie)
 """
 import os
 

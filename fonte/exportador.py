@@ -1,10 +1,10 @@
 # Conectar no PostgreSQL e extrair as informações completas das tabelas
 
 import os
+import json
 from sqlalchemy import create_engine, inspect
 from dotenv import load_dotenv
 from datetime import datetime
-import json
 
 load_dotenv()
 
@@ -24,7 +24,6 @@ def extrair_metadados(inspector, nome_tabela):
     Extrai os metadados das colunas das tabelas do banco de dados PostgreSQL.
     Metadados extraidos: colunas, PKs, FKs, Índices e Constraints
     """
-
     colunas = inspector.get_columns(nome_tabela)
     pk_info = inspector.get_pk_constraint(nome_tabela)
     fk_info = inspector.get_foreign_keys(nome_tabela)
