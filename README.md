@@ -3,48 +3,63 @@ Sistema para detectar e classificar mudanças em schemas PostgreSQL, gerando rel
 
 
 ### Sobre o Projeto
----
 
-Desenvolvi esta ferramenta para automatizar a detecção de mudanças em schemas de bancos de dados PostgreSQL. O sistema captura snapshots dos metadados das tabelas, compara versões diferentes e classifica as mudanças por nível de impacto (breaking, warning ou safe), gerando um relatório HTML consolidado e no Terminal.   
+Desenvolvi esta ferramenta para automatizar a detecção de mudanças em schemas PostgreSQL. O sistema captura snapshots dos metadados, compara versões diferentes e classifica as mudanças por impacto (breaking, warning ou safe), gerando relatórios HTML consolidados.
 
-Pensei nesse projeto para me auxiliar em pipelines como: migrações de banco de dados para um sistema interno do setor onde trabalhava. Nele eu migrei de SQLite para PostgreSQL, tive que tomar a decisão técnica voltar para SQLite por necessidade, para facilitar a criação de um banco de dados diferente, criei um script para extrair os metadados do schema e salvar em arquivo JSON, para facilitar a criação do novo schema com novos indices e restrições, e na migração dos dados.
+**Origem do projeto:**
 
-### Como Funciona
----
-**O sistema funciona em quatro etapas principais:**
-1. **Extração de Metadados:**   
-O exportador conecta no PostgreSQL e extrai informações completas de cada tabela: nome das colunas, tipos de dados, constraints (NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY) e valores default. Tudo é salvo em arquivos JSON no diretório historico/.   
+Trabalhei numa migração SQLite → PostgreSQL → SQLite de um sistema interno no SAME do HCE. A complexidade de rastrear 
+mudanças manualmente me levou a criar um script para extrair metadados em JSON e comparar versões.
 
-2. **Comparação de Snapshots:**  
-O comparador lê dois snapshots JSON (antes e depois) e identifica três tipos de mudanças:
+O script evoluiu para este sistema completo de detecção e classificação.
 
-    Colunas adicionadas,  
-    Colunas removidas,  
-    Propriedades modificadas (tipo, constraints, defaults).  
-    
-3. **Classificação de Impacto:**  
-Cada mudança detectada é classificada automaticamente:  
+## Como Funciona
 
-**BREAKING (quebra compatibilidade)**:
+O sistema opera em 4 etapas:
 
-    Coluna removida,  
-    Tipo de dado alterado,  
-    NOT NULL adicionado em coluna existente,  
-    PRIMARY KEY modificada,  
-    DEFAULT VALUE alterado.  
+### 1. Extração de Metadados
 
-**WARNING (atenção necessária):**
+O exportador conecta no PostgreSQL e extrai:
+- Nome das colunas
+- Tipos de dados
+- Constraints (NOT NULL, UNIQUE, PK, FK)
+- Valores default
 
-    NOT NULL removido,  
-    FOREIGN KEY adicionada,  
-    Constraint UNIQUE modificada.  
+Output: Arquivos JSON em `historico/`
+
+### 2. Comparação de Snapshots
+
+O comparador identifica 3 tipos de mudanças:
+- Colunas adicionadas
+- Colunas removidas  
+- Propriedades modificadas
+
+### 3. Classificação de Impacto
+
+Cada mudança recebe um rótulo:
+
+**🔴 BREAKING** (quebra compatibilidade):
+- Coluna removida
+- Tipo alterado
+- NOT NULL adicionado
+
+**🟡 WARNING** (atenção):
+- NOT NULL removido
+- FK adicionada
+- UNIQUE modificada
+
+**🟢 SAFE** (compatível):
+- Coluna nullable adicionada
+
+### 4. Geração de Relatório
+
+Relatório HTML consolidado com:
+- Resumo geral (total por categoria)
+- Detalhes por tabela
 
 **SAFE (compatível):**
 
-    Coluna nova adicionada (nullable)
-
-4. **Geração de Relatório:**  
-O sistema gera um único arquivo HTML com todas as tabelas analisadas. O relatório mostra um resumo geral (total de breaking/warning/safe) e detalha cada mudança por tabela, com design limpo inspirado em ferramentas de profiling de dados.
+- Coluna nova adicionada (nullable)
 
 ---
 **Estrutura do Projeto:**  
@@ -150,20 +165,29 @@ Relatório HTML Consolidado: relatorios/relatorio_consolidado_2026-02-25_13-59-1
 **Relatório HTML (exemplo):**   
 ![Relatório versão HTML](./imagens/SCR.png)
 
+*Relatório consolidado mostrando todas as tabelas, classificação 
+por severidade e detalhes de cada mudança.*
+
 ## Stack Técnica
 
 **Backend:**  
-SQLAlchemy (ORM e reflection),   
-psycopg2 (driver PostgreSQL),  
-python-dotenv (variáveis de ambiente).
+- SQLAlchemy (ORM e reflection)   
+- psycopg2 (driver PostgreSQL)  
+- python-dotenv (variáveis de ambiente)
 
 **Frontend:**  
-HTML/CSS  
+- HTML/CSS  
 
-**Arquitetura:**  
-3 módulos independentes,   
-Separação de responsabilidades,   
-JSON como formato intermediário.   
+**Arquitetura:**
+- 3 módulos independentes (extrator, comparador, reporter)
+- Separação de responsabilidades
+- JSON como formato intermediário
+- Templates HTML separados
+
+**Formato de dados:**
+- Snapshots em JSON
+- Versionamento via timestamp
+- Nomenclatura: `{tabela}_{tipo}.json`   
 
 ## Limitações Conhecidas
 
