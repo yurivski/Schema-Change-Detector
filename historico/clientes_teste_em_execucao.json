@@ -26,7 +26,7 @@
             ]
         },
         "nome_teste": {
-            "tipo": "VARCHAR(100)",
+            "tipo": "VARCHAR(90)",
             "not_null": false,
             "default": null,
             "primary_key": true,

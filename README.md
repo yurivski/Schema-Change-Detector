@@ -38,17 +38,17 @@ O comparador identifica 3 tipos de mudanças:
 
 Cada mudança recebe um rótulo:
 
-**🔴 BREAKING** (quebra compatibilidade):
+**BREAKING** (quebra compatibilidade):
 - Coluna removida
 - Tipo alterado
 - NOT NULL adicionado
 
-**🟡 WARNING** (atenção):
+**WARNING** (atenção):
 - NOT NULL removido
 - FK adicionada
 - UNIQUE modificada
 
-**🟢 SAFE** (compatível):
+**SAFE** (compatível):
 - Coluna nullable adicionada
 
 ### 4. Geração de Relatório
@@ -57,9 +57,8 @@ Relatório HTML consolidado com:
 - Resumo geral (total por categoria)
 - Detalhes por tabela
 
-**SAFE (compatível):**
-
-- Coluna nova adicionada (nullable)
+**Relatório HTML (exemplo):**   
+![Relatório versão HTML](./imagens/SCR.png)
 
 ---
 **Estrutura do Projeto:**  
@@ -162,9 +161,6 @@ Adicionadas: 0 | Removidas: 0 | Modificadas: 0
 Relatório HTML Consolidado: relatorios/relatorio_consolidado_2026-02-25_13-59-15.html
 ```
 
-**Relatório HTML (exemplo):**   
-![Relatório versão HTML](./imagens/SCR.png)
-
 *Relatório consolidado mostrando todas as tabelas, classificação 
 por severidade e detalhes de cada mudança.*
 
@@ -189,10 +185,7 @@ por severidade e detalhes de cada mudança.*
 - Versionamento via timestamp
 - Nomenclatura: `{tabela}_{tipo}.json`   
 
-## Limitações Conhecidas
-
-**Detecção de tipo VARCHAR:**  
-O sistema detecta mudança de VARCHAR(50) para VARCHAR(100) como "tipo mudou", mas não diferencia se foi aumento (safe) ou redução (breaking). Preciso implementar parsing do tamanho para classificar corretamente.   
+## Limitações Atuais
 
 **Ordem das colunas:**  
 Não detecta reordenação de colunas (ex: coluna A que era a primeira agora é a terceira). Isso raramente importa, mas pode afetar queries que usam SELECT *.  
