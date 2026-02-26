@@ -147,8 +147,8 @@ Adicionadas: 0 | Removidas: 0 | Modificadas: 0
 Relatório HTML Consolidado: relatorios/relatorio_consolidado_2026-02-25_13-59-15.html
 ```
 
-**Relatório HTML:**   
-
+**Relatório HTML (exemplo):**   
+![Relatório versão HTML](./imagens/SCR.png)
 
 ## Stack Técnica
 
