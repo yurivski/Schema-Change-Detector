@@ -5,7 +5,9 @@ DriftBrake - Em processo de renomeação e desenvolvimento
 DriftBrake é uma ferramenta Python para validar contratos de schema antes da execução de 
 pipelines de dados.
 
-Ela lê automaticamente o schema atual do PostgreSQL, compara contra um contrato versionado, classifica mudanças por impacto (BREAKING, WARNING, SAFE) e bloqueia pipelines quando detectar mudanças incompatíveis, antes que elas causem falhas em produção.
+Ela lê automaticamente o schema atual do PostgreSQL, compara contra um contrato versionado, 
+classifica mudanças por impacto (BREAKING, WARNING, SAFE) e bloqueia pipelines quando 
+detectar mudanças incompatíveis, antes que elas causem falhas em produção.
 
 
 Exemplo
