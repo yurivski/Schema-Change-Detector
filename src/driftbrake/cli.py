@@ -20,36 +20,20 @@ Códigos de saída:
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
-from driftbrake.contracts.writer import ContractWriter
-from driftbrake.exceptions import SchemaConnectionError
-from driftbrake.readers.postgres import PostgresSchemaReader
-
 from driftbrake.comparators.schema_comparator import SchemaComparator
+from driftbrake.contracts.writer import ContractWriter
 from driftbrake.exceptions import SchemaConnectionError, SchemaContractNotFoundError
+from driftbrake.guard import SchemaGuard
+from driftbrake.models import Severity
 from driftbrake.readers.json_reader import JsonSchemaReader
 from driftbrake.readers.postgres import PostgresSchemaReader
 from driftbrake.reporters.html_report import HtmlReporter
 from driftbrake.reporters.json_report import JsonReporter
 from driftbrake.reporters.terminal import TerminalReporter
-
-from driftbrake.exceptions import SchemaConnectionError, SchemaContractNotFoundError
-from driftbrake.guard import SchemaGuard
-
-from driftbrake.models import Severity
-
-from driftbrake.contracts.writer import ContractWriter
-from driftbrake.exceptions import SchemaConnectionError
-from driftbrake.readers.postgres import PostgresSchemaReader
-
-from driftbrake.contracts.writer import ContractWriter
-from driftbrake.exceptions import SchemaConnectionError
-from driftbrake.readers.postgres import PostgresSchemaReader
 
 app = typer.Typer(
     name="driftbrake",
@@ -74,7 +58,8 @@ def _build_db_url(db_url: str | None) -> str:
     password = os.getenv("DB_PASSWORD", "")
     if not name or not user:
         typer.echo(
-            "[ERRO] URL do banco de dados não informada. Defina --db-url ou a variável DATABASE_URL.",
+            "[ERRO] URL do banco de dados não informada. "
+            "Defina --db-url ou a variável DATABASE_URL.",
             err=True,
         )
         raise typer.Exit(3)
@@ -84,7 +69,7 @@ def _build_db_url(db_url: str | None) -> str:
 @app.command("init")
 def init(
     db_url: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--db-url", help="URL de conexão com o banco de dados."),
     ] = None,
     schemas: Annotated[
@@ -120,7 +105,7 @@ def init(
 @app.command("check")
 def check(
     db_url: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--db-url", help="URL de conexão com o banco de dados."),
     ] = None,
     contract: Annotated[
@@ -129,22 +114,22 @@ def check(
     ] = "schema.lock.json",
     fail_on: Annotated[
         str,
-        typer.Option("--fail-on", help="Níveis de severidade separados por vírgula que causam falha."),
+        typer.Option("--fail-on", help="Níveis de severidade por vírgula que causam falha."),
     ] = "BREAKING",
     json_output: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--json", help="Grava o relatório de diff em JSON neste caminho."),
     ] = None,
     html_output: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--html", help="Grava o relatório de diff em HTML neste caminho."),
     ] = None,
     markdown_output: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--markdown", help="Grava o relatório de diff em Markdown neste caminho."),
     ] = None,
     config: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--config", help="Caminho para o arquivo de configuração driftbrake.yml."),
     ] = None,
 ) -> None:
@@ -180,7 +165,8 @@ def check(
     failing = [c for c in result.changes if c.severity in fail_severities]
     if failing:
         typer.echo(
-            f"\n[FALHA] {len(failing)} alteração(ões) acima do limiar ({fail_on}). Saindo com código 2.",
+            f"\n[FALHA] {len(failing)} alteração(ões) acima do limiar ({fail_on}). "
+            "Saindo com código 2.",
             err=True,
         )
         raise typer.Exit(2)
@@ -191,23 +177,23 @@ def check(
 @app.command("diff")
 def diff(
     old: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--old", help="Caminho para o arquivo JSON do schema antigo."),
     ] = None,
     new: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--new", help="Caminho para o arquivo JSON do schema novo."),
     ] = None,
     new_db: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--new-db", help="URL do banco de dados a ser usado como schema 'novo'."),
     ] = None,
     json_output: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--json", help="Grava o relatório de diff em JSON neste caminho."),
     ] = None,
     html_output: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--html", help="Grava o relatório de diff em HTML neste caminho."),
     ] = None,
 ) -> None:
@@ -265,7 +251,7 @@ def diff(
 @app.command("snapshot")
 def snapshot(
     db_url: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--db-url", help="URL de conexão com o banco de dados."),
     ] = None,
     output: Annotated[
@@ -297,7 +283,7 @@ def snapshot(
 @app.command("update-contract")
 def update_contract(
     db_url: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--db-url", help="URL de conexão com o banco de dados."),
     ] = None,
     contract: Annotated[

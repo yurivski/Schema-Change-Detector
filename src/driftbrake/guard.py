@@ -16,7 +16,7 @@ from driftbrake.classifiers.impact_classifier import ImpactClassifier
 from driftbrake.comparators.schema_comparator import SchemaComparator
 from driftbrake.config.settings import Settings
 from driftbrake.contracts.loader import ContractLoader
-from driftbrake.exceptions import BreakingSchemaChangeError, SchemaConnectionError
+from driftbrake.exceptions import SchemaConnectionError
 from driftbrake.models import DiffResult, Severity
 from driftbrake.readers.postgres import PostgresSchemaReader
 from driftbrake.reporters.html_report import HtmlReporter
@@ -75,7 +75,7 @@ class SchemaGuard:
         cls,
         contract_path: str | Path,
         **kwargs: Any,
-    ) -> "SchemaGuard":
+    ) -> SchemaGuard:
         """
         Cria um SchemaGuard usando DATABASE_URL do ambiente.
 
@@ -127,7 +127,11 @@ class SchemaGuard:
             expected=expected_schema,
             current=current_schema,
             expected_source=str(self.contract_path),
-            current_source=self.database_url.split("@")[-1] if "@" in self.database_url else self.database_url,
+            current_source=(
+                self.database_url.split("@")[-1]
+                if "@" in self.database_url
+                else self.database_url
+            ),
         )
         return result
 
@@ -157,7 +161,8 @@ class SchemaGuard:
         self.save_reports(result)
         self.print_report(result)
 
-        failing_severities = [s for s in self.settings.fail_on if s in {c.severity for c in result.changes}]
+        active_severities = {c.severity for c in result.changes}
+        failing_severities = [s for s in self.settings.fail_on if s in active_severities]
         if failing_severities:
             labels = [s.value for s in failing_severities]
             print(

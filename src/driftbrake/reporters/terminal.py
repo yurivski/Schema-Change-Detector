@@ -30,10 +30,10 @@ class TerminalReporter:
     def print(self, result: DiffResult) -> None:
         # Imprime o DiffResult no terminal usando Rich.
         try:
+            from rich import box
             from rich.console import Console
             from rich.panel import Panel
             from rich.table import Table
-            from rich import box
         except ImportError:
             self._print_plain(result)
             return
@@ -152,7 +152,11 @@ class TerminalReporter:
     def _print_plain(self, result: DiffResult) -> None:
         # Saída em texto simples como alternativa quando Rich não está disponível.
         print(f"\nSchema Comparison Report — {result.compared_at.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Breaking: {result.total_breaking}  Warnings: {result.total_warnings}  Safe: {result.total_safe}")
+        print(
+            f"Breaking: {result.total_breaking}  "
+            f"Warnings: {result.total_warnings}  "
+            f"Safe: {result.total_safe}"
+        )
         print()
         for change in result.changes:
             print(

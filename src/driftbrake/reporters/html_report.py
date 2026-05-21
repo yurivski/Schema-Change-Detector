@@ -8,12 +8,10 @@ usando Jinja2 para renderização.
 from __future__ import annotations
 
 import re
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from driftbrake.models import DiffResult, SchemaChange, Severity
-
 
 _TEMPLATES_DIR = Path(__file__).parent.parent.parent.parent.parent / "templates"
 
@@ -46,7 +44,7 @@ def _render_template(template_str: str, context: dict[str, Any]) -> str:
     caindo para substituição simples {{key}} caso contrário.
     """
     try:
-        from jinja2 import Environment, BaseLoader
+        from jinja2 import BaseLoader, Environment
         env = Environment(loader=BaseLoader(), autoescape=False)
         # Converte {{key}} para {{ key }} para compatibilidade com Jinja2
         jinja_template = re.sub(r"\{\{(\w+)\}\}", r"{{ \1 }}", template_str)

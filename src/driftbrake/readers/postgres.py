@@ -37,7 +37,7 @@ class PostgresSchemaReader(SchemaReader):
         schemas: list[str] | None = None,
         include_tables: list[str] | None = None,
         exclude_tables: list[str] | None = None,
-    ) -> "PostgresSchemaReader":
+    ) -> PostgresSchemaReader:
         """
         Cria um PostgresSchemaReader a partir de variáveis de ambiente.
 
@@ -133,7 +133,8 @@ class PostgresSchemaReader(SchemaReader):
         SchemaConnectionError: Se a conexão falhar.
         """
         try:
-            from sqlalchemy import create_engine, inspect as sa_inspect
+            from sqlalchemy import create_engine
+            from sqlalchemy import inspect as sa_inspect
         except ImportError as exc:
             raise SchemaConnectionError(
                 "SQLAlchemy is required for PostgresSchemaReader. "

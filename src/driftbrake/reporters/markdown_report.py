@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from driftbrake.models import DiffResult, SchemaChange, Severity
-
+from driftbrake.models import DiffResult, Severity
 
 _SEVERITY_EMOJI = {
     Severity.BREAKING: "🔴",

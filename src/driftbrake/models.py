@@ -7,18 +7,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     # Níveis de severidade para alterações de schema.
     BREAKING = "BREAKING"
     WARNING = "WARNING"
     SAFE = "SAFE"
 
 
-class ChangeType(str, Enum):
+class ChangeType(StrEnum):
     # Tipos de alterações de schema que podem ser detectadas.
     TABLE_ADDED = "table_added"
     TABLE_REMOVED = "table_removed"
@@ -59,7 +59,7 @@ class ColumnSchema:
         }
 
     @classmethod
-    def from_dict(cls, name: str, data: dict[str, Any]) -> "ColumnSchema":
+    def from_dict(cls, name: str, data: dict[str, Any]) -> ColumnSchema:
         return cls(
             name=name,
             type=data.get("type", "unknown"),
@@ -89,7 +89,7 @@ class TableSchema:
         }
 
     @classmethod
-    def from_dict(cls, name: str, schema: str, data: dict[str, Any]) -> "TableSchema":
+    def from_dict(cls, name: str, schema: str, data: dict[str, Any]) -> TableSchema:
         columns = {
             col_name: ColumnSchema.from_dict(col_name, col_data)
             for col_name, col_data in data.get("columns", {}).items()

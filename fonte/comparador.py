@@ -3,16 +3,16 @@ Arquivo que irá comparar os metadados e identificar se houve alteração,
 qual, quando e onde.
 """
 
-import os
-import json
 import glob
-import sqlalchemy
-from exportador import extrair_metadados
+import json
+import os
+
 from relatorio import gerar_relatorio_consolidado, salvar_relatorio
+
 
 def carregar_json(caminho_arquivo):
     try:
-        with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
+        with open(caminho_arquivo, encoding='utf-8') as arquivo:
             dados = json.load(arquivo)
             return dados
     except json.JSONDecodeError:
@@ -99,7 +99,10 @@ def exibir_mudancas(mudancas):
     modificadas = [m for m in mudancas if m['tipo'] in ['type_changed', 'property_changed']]
 
     print("\nMUDANÇAS DETECTADAS:")
-    print(f"Adicionadas: {len(adicionadas)} | Removidas: {len(removidas)} | Modificadas: {len(modificadas)}")
+    print(
+        f"Adicionadas: {len(adicionadas)} | Removidas: {len(removidas)} | "
+        f"Modificadas: {len(modificadas)}"
+    )
     
     # Exibe colunas adicionadas, removidas e modificadas
     for m in adicionadas:
@@ -115,9 +118,9 @@ def exibir_mudancas(mudancas):
             classificacao = "BREAKING: Tipo mudou"
         
         elif m['campo'] == 'not_null':
-            if m['valor_antigo'] == False and m['valor_novo'] == True:
+            if not m['valor_antigo'] and m['valor_novo']:
                 classificacao = "BREAKING: NOT NULL adicionado"
-            elif m['valor_antigo'] == True and m['valor_novo'] == False:
+            elif m['valor_antigo'] and not m['valor_novo']:
                 classificacao = "WARNING: NOT NULL removido"
             else:
                 classificacao = "Modificação em NOT NULL"
@@ -142,7 +145,10 @@ def exibir_mudancas(mudancas):
             classificacao = "Mudança detectada"
         
         # Exibir com classificação:
-        print(f" • {m['coluna']} ({classificacao}): {m['campo']} de {m['valor_antigo']} para {m['valor_novo']}")
+        print(
+            f" • {m['coluna']} ({classificacao}): {m['campo']} "
+            f"de {m['valor_antigo']} para {m['valor_novo']}"
+        )
 
 def teste_comparacao():
     pasta = 'historico'

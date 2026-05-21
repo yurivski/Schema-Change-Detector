@@ -1,10 +1,11 @@
 import os
 from datetime import datetime
 
+
 # Relatório HTML para mudanças de esquema
 def carregar_template(nome):
     caminho = os.path.join('templates', f'{nome}.html')
-    with open(caminho, 'r', encoding='utf-8') as f:
+    with open(caminho, encoding='utf-8') as f:
         return f.read()
     
 # Gera HTML para uma mudança específica
@@ -97,7 +98,7 @@ def classificar_mudancas(mudancas):
             if m['campo'] == 'tipo':
                 breaking.append(m)
             elif m['campo'] == 'not_null':
-                if m['valor_novo'] == True:
+                if m['valor_novo']:
                     breaking.append(m)
                 else:
                     warning.append(m)
@@ -178,7 +179,11 @@ def gerar_relatorio_consolidado(todas_mudancas):
             total_safe += saf
     
     if not tabelas_html:
-        tabelas_html = '<div class="table-section"><div class="no-changes">Nenhuma mudança detectada</div></div>'
+        tabelas_html = (
+            '<div class="table-section">'
+            '<div class="no-changes">Nenhuma mudança detectada</div>'
+            '</div>'
+        )
     
     timestamp = datetime.now().strftime('%d/%m/%Y às %H:%M:%S')
     

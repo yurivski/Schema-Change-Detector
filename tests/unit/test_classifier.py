@@ -1,10 +1,8 @@
 # Testes unitários para ImpactClassifier.
 
-import pytest
 
 from driftbrake.classifiers.impact_classifier import ImpactClassifier
 from driftbrake.models import ColumnSchema, Severity
-
 
 classifier = ImpactClassifier()
 
@@ -60,10 +58,12 @@ class TestColumnRemovedClassification:
 
 class TestNullableClassification:
     def test_not_null_added_is_breaking(self):
-        assert classifier.classify_nullable_change(old_nullable=True, new_nullable=False) == Severity.BREAKING
+        result = classifier.classify_nullable_change(old_nullable=True, new_nullable=False)
+        assert result == Severity.BREAKING
 
     def test_not_null_removed_is_warning(self):
-        assert classifier.classify_nullable_change(old_nullable=False, new_nullable=True) == Severity.WARNING
+        result = classifier.classify_nullable_change(old_nullable=False, new_nullable=True)
+        assert result == Severity.WARNING
 
 
 class TestDefaultClassification:

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from driftbrake.classifiers.type_compatibility import classify_type_change
-from driftbrake.models import Severity
 from driftbrake.classifiers.impact_classifier import ImpactClassifier
+from driftbrake.classifiers.type_compatibility import classify_type_change
 from driftbrake.models import (
     ChangeType,
     ColumnSchema,
@@ -148,7 +147,10 @@ class SchemaComparator:
                     f"compatible type ({old_column.type} -> {new_column.type}). "
                     "Possible rename."
                 ),
-                suggestion=f"If this is a rename, update the schema contract with the new column name '{new_col}'.",
+                suggestion=(
+                    f"If this is a rename, update the schema contract "
+                    f"with the new column name '{new_col}'."
+                ),
             )
             change.confidence = confidence
             changes.append(change)
@@ -412,7 +414,10 @@ class SchemaComparator:
                     confidence = "low"
 
                 # Prioriza o melhor candidato encontrado
-                if best_match is None or self._confidence_rank(confidence) > self._confidence_rank(best_confidence):
+                if (
+                    best_match is None
+                    or self._confidence_rank(confidence) > self._confidence_rank(best_confidence)
+                ):
                     best_match = added
                     best_confidence = confidence
 

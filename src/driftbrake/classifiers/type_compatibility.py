@@ -11,7 +11,6 @@ import re
 
 from driftbrake.models import Severity
 
-
 # Regras de compatibilidade explícitas como triplas (from_pattern, to_pattern, severity).
 # Os padrões são comparados sem diferenciação de maiúsculas usando substring ou regex.
 _COMPAT_RULES: list[tuple[str, str, Severity]] = [

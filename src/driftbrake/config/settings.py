@@ -49,12 +49,12 @@ class Settings:
         self.rules = rules or {}
 
     @classmethod
-    def defaults(cls) -> "Settings":
+    def defaults(cls) -> Settings:
         # Retorna um objeto Settings com todos os valores padrão.
         return cls()
 
     @classmethod
-    def from_file(cls, path: str | Path) -> "Settings":
+    def from_file(cls, path: str | Path) -> Settings:
         """
         Carrega as configurações de um arquivo YAML.
 
@@ -84,7 +84,7 @@ class Settings:
         return cls._parse(raw, path)
 
     @classmethod
-    def _parse(cls, raw: dict[str, Any], path: Path) -> "Settings":
+    def _parse(cls, raw: dict[str, Any], path: Path) -> Settings:
         def parse_severities(values: list[str] | None) -> list[Severity]:
             if not values:
                 return []

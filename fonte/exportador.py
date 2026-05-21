@@ -1,10 +1,11 @@
 # Conectar no PostgreSQL e extrair as informações completas das tabelas
 
-import os
 import json
-from sqlalchemy import create_engine, inspect
-from dotenv import load_dotenv
+import os
 from datetime import datetime
+
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, inspect
 
 load_dotenv()
 

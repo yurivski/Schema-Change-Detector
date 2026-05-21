@@ -1,6 +1,5 @@
 # Testes unitários para a matriz de compatibilidade de tipos.
 
-import pytest
 
 from driftbrake.classifiers.type_compatibility import classify_type_change
 from driftbrake.models import Severity
