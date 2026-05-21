@@ -1,0 +1,437 @@
+{
+  "contract_version": "1.0",
+  "generated_by": "driftbrake",
+  "driftbrake_version": "0.2.0",
+  "database_type": "postgresql",
+  "generated_at": "2026-05-19T14:28:00.517828",
+  "schemas": {
+    "public": {
+      "tables": {
+        "departments": {
+          "columns": {
+            "department_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "department_name": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        },
+        "products": {
+          "columns": {
+            "product_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "product_category_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "product_name": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "product_description": {
+              "type": "VARCHAR(255)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            },
+            "product_price": {
+              "type": "DOUBLE PRECISION",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 5
+            },
+            "product_image": {
+              "type": "VARCHAR(255)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 6
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        },
+        "orders": {
+          "columns": {
+            "order_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "order_date": {
+              "type": "TIMESTAMP",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "order_customer_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "order_status": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        },
+        "order_items": {
+          "columns": {
+            "order_item_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "order_item_order_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "order_item_product_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "order_item_quantity": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            },
+            "order_item_subtotal": {
+              "type": "DOUBLE PRECISION",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 5
+            },
+            "order_item_product_price": {
+              "type": "DOUBLE PRECISION",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 6
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        },
+        "customers": {
+          "columns": {
+            "customer_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "customer_fname": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "customer_lname": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "customer_email": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            },
+            "customer_password": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 5
+            },
+            "customer_street": {
+              "type": "VARCHAR(255)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 6
+            },
+            "customer_city": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 7
+            },
+            "customer_state": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 8
+            },
+            "customer_zipcode": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 9
+            },
+            "coluna_teste": {
+              "type": "INTEGER",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 10
+            }
+          },
+          "indexes": [
+            "idx_cities"
+          ],
+          "check_constraints": [
+            "coluna_teste > 10"
+          ]
+        },
+        "categories": {
+          "columns": {
+            "category_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "category_department_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "category_name": {
+              "type": "VARCHAR(45)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        },
+        "usuarios_teste": {
+          "columns": {
+            "id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": "nextval('\"public\".usuarios_teste_id_seq'::regclass)",
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "nome": {
+              "type": "VARCHAR(200)",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "idade": {
+              "type": "INTEGER",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "rg": {
+              "type": "INTEGER",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": true,
+              "foreign_key": [],
+              "ordinal_position": 4
+            },
+            "endereco": {
+              "type": "VARCHAR(250)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 5
+            }
+          },
+          "indexes": [
+            "rg_unico_obrigatorio"
+          ],
+          "check_constraints": []
+        },
+        "clientes_teste": {
+          "columns": {
+            "id_teste": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": "nextval('\"public\".clientes_teste_id_teste_seq'::regclass)",
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [
+                {
+                  "name": "fk_teste",
+                  "constrained_columns": [
+                    "id_teste"
+                  ],
+                  "referred_schema": "public",
+                  "referred_table": "categories",
+                  "referred_columns": [
+                    "category_id"
+                  ],
+                  "options": {},
+                  "comment": null
+                }
+              ],
+              "ordinal_position": 1
+            },
+            "nome_teste": {
+              "type": "VARCHAR(100)",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "pontuacao_teste": {
+              "type": "INTEGER",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": true,
+              "foreign_key": [],
+              "ordinal_position": 3
+            }
+          },
+          "indexes": [
+            "idx_nome_teste",
+            "unique_pontuacao"
+          ],
+          "check_constraints": [
+            "pontuacao_teste > 10"
+          ]
+        }
+      }
+    }
+  }
+}

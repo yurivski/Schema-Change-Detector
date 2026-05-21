@@ -1,0 +1,172 @@
+{
+  "contract_version": "1.0",
+  "generated_by": "driftbrake",
+  "driftbrake_version": "0.2.0",
+  "database_type": "postgresql",
+  "generated_at": "2026-05-19T10:00:00",
+  "schemas": {
+    "public": {
+      "tables": {
+        "customers": {
+          "columns": {
+            "id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "name": {
+              "type": "VARCHAR(50)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            },
+            "email": {
+              "type": "VARCHAR(200)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": true,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "age": {
+              "type": "BIGINT",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            },
+            "score": {
+              "type": "NUMERIC(12,2)",
+              "nullable": true,
+              "default": "0.0",
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 5
+            },
+            "status": {
+              "type": "VARCHAR(50)",
+              "nullable": true,
+              "default": "'inactive'",
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 6
+            },
+            "new_nullable_col": {
+              "type": "TEXT",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 7
+            },
+            "required_col": {
+              "type": "VARCHAR(100)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 8
+            },
+            "required_with_default": {
+              "type": "VARCHAR(100)",
+              "nullable": false,
+              "default": "'pending'",
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 9
+            }
+          },
+          "indexes": ["customers_email_idx"],
+          "check_constraints": []
+        },
+        "orders": {
+          "columns": {
+            "id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "customer_id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [
+                {
+                  "constrained_columns": ["customer_id"],
+                  "referred_table": "customers",
+                  "referred_columns": ["id"]
+                }
+              ],
+              "ordinal_position": 2
+            },
+            "total": {
+              "type": "NUMERIC(12,2)",
+              "nullable": false,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 3
+            },
+            "created_at": {
+              "type": "TIMESTAMP",
+              "nullable": true,
+              "default": "now()",
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 4
+            }
+          },
+          "indexes": [],
+          "check_constraints": ["total > 0"]
+        },
+        "new_table": {
+          "columns": {
+            "id": {
+              "type": "INTEGER",
+              "nullable": false,
+              "default": null,
+              "primary_key": true,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 1
+            },
+            "description": {
+              "type": "TEXT",
+              "nullable": true,
+              "default": null,
+              "primary_key": false,
+              "unique": false,
+              "foreign_key": [],
+              "ordinal_position": 2
+            }
+          },
+          "indexes": [],
+          "check_constraints": []
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "driftbrake"
+version = "0.2.0"
+description = "Schema Contract Guard - Validates schema contracts before data pipelines"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Yuri Pontes", email = "yurilbrok23@gmail.com" },
+]
+keywords = ["schema", "database", "data-engineering", "postgresql", "contract-testing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Database",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "sqlalchemy>=2.0",
+    "psycopg2-binary",
+    "python-dotenv",
+    "pyyaml",
+    "jinja2",
+    "rich",
+    "typer",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+    "build",
+    "twine",
+]
+
+[project.scripts]
+driftbrake = "driftbrake.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/driftbrake"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+src = ["src"]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+strict = false
+ignore_missing_imports = true

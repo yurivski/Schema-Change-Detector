@@ -1,0 +1,56 @@
+# Grava contrato de schema - salva o schema.lock.json a partir de um DatabaseSchema.
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from driftbrake.models import DatabaseSchema
+
+DRIFTBRAKE_VERSION = "0.2.0"
+
+
+class ContractWriter:
+    # Grava um DatabaseSchema em um arquivo schema.lock.json.
+
+    def __init__(self, path: str | Path) -> None:
+        self.path = Path(path)
+
+    def write(self, schema: DatabaseSchema) -> None:
+        """
+        Serializa o DatabaseSchema para JSON e grava no disco.
+        schema: O DatabaseSchema a ser persistido.
+        """
+        data = self._serialize(schema)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+    def _serialize(self, schema: DatabaseSchema) -> dict:
+        serialized_schemas: dict = {}
+        for schema_name, tables in schema.schemas.items():
+            serialized_schemas[schema_name] = {
+                "tables": {
+                    table_name: self._serialize_table(table)
+                    for table_name, table in tables.items()
+                }
+            }
+
+        return {
+            "contract_version": "1.0",
+            "generated_by": "driftbrake",
+            "driftbrake_version": DRIFTBRAKE_VERSION,
+            "database_type": schema.database_type,
+            "generated_at": schema.generated_at.isoformat(),
+            "schemas": serialized_schemas,
+        }
+
+    def _serialize_table(self, table) -> dict:
+        return {
+            "columns": {
+                col_name: col.to_dict()
+                for col_name, col in table.columns.items()
+            },
+            "indexes": table.indexes,
+            "check_constraints": table.check_constraints,
+        }
