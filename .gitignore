@@ -35,4 +35,6 @@ tmp/
 *.bak
 *.backup
 
+uv.lock
+examples/
 testes/
