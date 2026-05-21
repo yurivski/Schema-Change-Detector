@@ -1,5 +1,5 @@
-```Markdown
-DriftBrake - Em processo de renomeação e desenvolvimento
+```text
+DriftBrake
 ==========
 
 DriftBrake é uma ferramenta Python para validar contratos de schema antes da execução de
