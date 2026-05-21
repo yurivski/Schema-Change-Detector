@@ -66,7 +66,7 @@ def _build_db_url(db_url: str | None) -> str:
     return f"postgresql://{user}:{password}@{host}:{port}/{name}"
 
 
-@app.command("init")
+@app.command("init", help="Inicializa um contrato de schema conectando ao banco de dados.")
 def init(
     db_url: Annotated[
         str | None,
@@ -102,7 +102,7 @@ def init(
     typer.echo(f"     {total_tables} tabela(s) capturada(s) em {len(db_schema.schemas)} schema(s).")
 
 
-@app.command("check")
+@app.command("check", help="Verifica o schema atual do banco contra o contrato e reporta divergências.")
 def check(
     db_url: Annotated[
         str | None,
@@ -174,7 +174,7 @@ def check(
     typer.echo("\n[OK] Schema compatível.")
 
 
-@app.command("diff")
+@app.command("diff", help="Compara dois schemas (arquivos JSON ou banco de dados) e exibe as diferenças.")
 def diff(
     old: Annotated[
         str | None,
