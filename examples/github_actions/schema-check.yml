@@ -1,0 +1,90 @@
+name: Schema Contract Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "schema.lock.json"
+      - "migrations/**"
+      - "*.sql"
+
+jobs:
+  schema-check:
+    name: Validate Schema Contract
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install driftbrake
+        run: pip install driftbrake
+
+      - name: Apply migrations (if applicable)
+        run: |
+          # Replace with your actual migration command
+          # e.g.: alembic upgrade head
+          # e.g.: flyway migrate
+          echo "Migrations applied."
+        env:
+          DATABASE_URL: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+
+      - name: Run schema check
+        id: schema_check
+        run: |
+          driftbrake check \
+            --db-url "$DATABASE_URL" \
+            --contract schema.lock.json \
+            --fail-on BREAKING \
+            --json reports/schema_diff.json \
+            --html reports/schema_diff.html \
+            --markdown reports/schema_diff.md
+        env:
+          DATABASE_URL: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+
+      - name: Post schema diff as PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const mdPath = 'reports/schema_diff.md';
+            if (fs.existsSync(mdPath)) {
+              const body = fs.readFileSync(mdPath, 'utf8');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }
+
+      - name: Upload schema diff reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-diff-reports
+          path: reports/
+          retention-days: 30

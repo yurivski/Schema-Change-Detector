@@ -1,0 +1,118 @@
+"""
+Matriz de compatibilidade de tipos PostgreSQL.
+
+Classifica alterações de tipo como SAFE, WARNING ou BREAKING com base nas
+regras de coerção e cast implícito do PostgreSQL.
+"""
+
+from __future__ import annotations
+
+import re
+
+from driftbrake.models import Severity
+
+
+# Regras de compatibilidade explícitas como triplas (from_pattern, to_pattern, severity).
+# Os padrões são comparados sem diferenciação de maiúsculas usando substring ou regex.
+_COMPAT_RULES: list[tuple[str, str, Severity]] = [
+    # Expansões de VARCHAR: seguro
+    ("varchar", "text", Severity.SAFE),
+    ("character varying", "text", Severity.SAFE),
+
+    # Alargamento numérico: seguro (tipos menores promovidos)
+    ("smallint", "integer", Severity.SAFE),
+    ("smallint", "bigint", Severity.SAFE),
+    ("real", "double precision", Severity.SAFE),
+
+    # Estreitamento numérico: crítico
+    ("bigint", "integer", Severity.BREAKING),
+    ("bigint", "smallint", Severity.BREAKING),
+    ("integer", "smallint", Severity.BREAKING),
+    ("double precision", "real", Severity.BREAKING),
+
+    # integer -> bigint: aviso (alargamento, mas pode afetar o comportamento da app / tipos ORM)
+    ("integer", "bigint", Severity.WARNING),
+
+    # Data/hora: date -> timestamp é aviso (sem perda de dados, mas semântica muda)
+    ("date", "timestamp", Severity.WARNING),
+    ("timestamp", "date", Severity.BREAKING),
+    ("timestamp", "timestamptz", Severity.WARNING),
+    ("timestamptz", "timestamp", Severity.WARNING),
+
+    # Estreitamento de text/varchar: crítico
+    ("text", "varchar", Severity.BREAKING),
+    ("text", "character varying", Severity.BREAKING),
+    ("text", "numeric", Severity.BREAKING),
+    ("text", "integer", Severity.BREAKING),
+    ("text", "bigint", Severity.BREAKING),
+
+    # numeric para text: crítico
+    ("numeric", "text", Severity.BREAKING),
+    ("integer", "text", Severity.WARNING),
+    ("bigint", "text", Severity.WARNING),
+
+    # Alterações de boolean: crítico
+    ("boolean", "integer", Severity.BREAKING),
+    ("integer", "boolean", Severity.BREAKING),
+]
+
+
+def _normalize_type(type_str: str) -> str:
+    # Normaliza a string de tipo para comparação: minúsculas e sem espaços extras.
+    return type_str.strip().lower()
+
+
+def _extract_varchar_length(type_str: str) -> int | None:
+    # Extrai o comprimento de VARCHAR(n) ou CHARACTER VARYING(n).
+    match = re.search(r"(?:varchar|character varying)\s*\((\d+)\)", type_str, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def _extract_numeric_precision(type_str: str) -> tuple[int, int] | None:
+    # Extrai (precisão, escala) de NUMERIC(p, s) ou DECIMAL(p, s).
+    match = re.search(r"(?:numeric|decimal)\s*\((\d+)\s*,\s*(\d+)\)", type_str, re.IGNORECASE)
+    if match:
+        return int(match.group(1)), int(match.group(2))
+    return None
+
+
+def classify_type_change(old_type: str, new_type: str) -> Severity:
+    # Classifica uma alteração de tipo de coluna como SAFE, WARNING ou BREAKING.
+    if _normalize_type(old_type) == _normalize_type(new_type):
+        return Severity.SAFE
+
+    old_norm = _normalize_type(old_type)
+    new_norm = _normalize_type(new_type)
+
+    # Regras de VARCHAR(n) -> VARCHAR(m)
+    old_len = _extract_varchar_length(old_norm)
+    new_len = _extract_varchar_length(new_norm)
+    if old_len is not None and new_len is not None:
+        if new_len >= old_len:
+            return Severity.SAFE
+        return Severity.BREAKING
+
+    # VARCHAR(n) -> TEXT: seguro
+    if old_len is not None and "text" in new_norm:
+        return Severity.SAFE
+
+    # NUMERIC(p1,s) -> NUMERIC(p2,s): seguro se p2 >= p1
+    old_num = _extract_numeric_precision(old_norm)
+    new_num = _extract_numeric_precision(new_norm)
+    if old_num is not None and new_num is not None:
+        old_prec, old_scale = old_num
+        new_prec, new_scale = new_num
+        if new_scale == old_scale and new_prec >= old_prec:
+            return Severity.SAFE
+        if new_prec < old_prec or new_scale != old_scale:
+            return Severity.BREAKING
+
+    # Aplica regras explícitas (verifica se a substring está contida)
+    for from_pat, to_pat, severity in _COMPAT_RULES:
+        if from_pat in old_norm and to_pat in new_norm:
+            return severity
+
+    # Padrão: alteração de tipo desconhecida é BREAKING (conservador)
+    return Severity.BREAKING
