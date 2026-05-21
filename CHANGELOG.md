@@ -6,11 +6,26 @@
 
 <br>
 
-## [0.2.0]
+## [0.0.1]
+
+### Publicação
+
+**Reserva de nome no PyPI**
+- Versão inicial publicada para travar o nome `driftbrake` no PyPI.
+- Suporte ao Python 3.10+ (substitui `StrEnum` por `str + Enum`).
+- Configuração de exclusões de build no hatchling.
+- `[project.urls]` e classifiers completos adicionados ao `pyproject.toml`.
+- README traduzido para inglês.
+- Dependências refatoradas: `psycopg2` movido para extras `[postgres]`.
+
+### Bugs identificados
+
+- `TypeError` em `foreign_key` durante comparação de colunas.
+- Templates HTML fora do pacote (não incluídos na wheel).
 
 ### Adicionado
 
-**Pacote Python instalável**
+**Pacote Python**
 - Estrutura `src/driftbrake/` com todos os módulos do pacote.
 - `pyproject.toml` com dependências declaradas, metadados do projeto e ponto de entrada `driftbrake`.
 - Comando `pip install -e .` funcional.
@@ -56,7 +71,7 @@
 - HTML usando os templates existentes em `templates/` via Jinja2.
 - Markdown para uso em comentários automáticos de pull requests.
 
-**`SchemaGuard` — API de alto nível**
+**`SchemaGuard` — API**
 - `SchemaGuard(database_url, contract_path, ...)` para uso direto em pipelines Python.
 - `SchemaGuard.from_env(contract_path)` para leitura automática de variáveis de ambiente.
 - `check()` retorna `DiffResult` sem efeitos colaterais.
@@ -74,14 +89,8 @@
 - 57 testes unitários em `tests/unit/` cobrindo comparador, classificador e matriz de tipos.
 - Fixtures em `tests/fixtures/` para testes sem dependência de banco.
 
-**Exemplos**
-- `examples/simple_pipeline/pipeline.py`: pipeline Python com `SchemaGuard.from_env()`.
-- `examples/airflow/schema_check_dag.py`: DAG Airflow com `schema_check >> extract >> transform >> load`.
-- `examples/dbt/check_before_run.sh`: execução de `driftbrake check` antes do `dbt run`.
-- `examples/github_actions/schema-check.yml`: workflow de CI para validação em pull requests.
-
 **CI do projeto**
-- `.github/workflows/tests.yml`: lint, typecheck e testes em todo push e pull request.
+- `.github/workflows/ci.yml`: lint, typecheck e testes em todo push e pull request.
 
 **Makefile**
 - Comandos: `install`, `test`, `lint`, `format`, `typecheck`, `check`.
@@ -101,56 +110,6 @@
 - `arquivos.py`: script de scaffolding da estrutura original, sem utilidade na versão atual.
 - `requirements.txt`: substituído pelo `pyproject.toml`.
 
-</div>
 ---
 
-## [0.1.0]
-
-### Adicionado
-
-**Exportação de metadados**
-- `fonte/exportador.py`: conecta no PostgreSQL via SQLAlchemy e extrai metadados de tabelas especificadas manualmente.
-- Extrai: colunas, tipos, nullable, defaults, primary keys, foreign keys, unique constraints, check constraints e indexes.
-- Salva snapshots JSON em `historico/` com sufixo de timestamp ou nome customizado.
-
-**Comparação de snapshots**
-- `fonte/comparador.py`: lê dois arquivos JSON e detecta colunas adicionadas, removidas e propriedades modificadas.
-- Detecta mudanças em: tipo, nullable (not_null), default, primary key, unique e foreign key.
-- Exibe resultado no terminal com classificação inline por mudança.
-
-**Classificação de impacto (inline)**
-- `BREAKING`: coluna removida, tipo alterado, NOT NULL adicionado, primary key mudou, foreign key mudou.
-- `WARNING`: NOT NULL removido, foreign key adicionada, unique constraint mudou.
-- `SAFE`: coluna nullable adicionada.
-
-**Relatório HTML consolidado**
-- `fonte/relatorio.py`: gera relatório HTML de todas as tabelas comparadas em um único arquivo.
-- Usa templates em `templates/` (`base.html`, `tabela.html`, `secao_breaking.html`, `secao_warning.html`, `secao_safe.html`).
-- Relatório salvo em `relatorios/relatorio_consolidado_YYYY-MM-DD_HH-MM-SS.html`.
-
-**Templates HTML**
-- Layout responsivo com CSS inline.
-- Cards de resumo por severidade (breaking/warning/safe).
-- Seções por tabela com badges coloridos.
-
-**Configuração por variáveis de ambiente**
-- `.env` com `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`.
-- Carregado via `python-dotenv`.
-
-**Estrutura inicial do projeto**
-- `arquivos.py`: script de scaffolding para criação automática de pastas e arquivos.
-- `requirements.txt`: dependências do projeto (`sqlalchemy`, `psycopg2`, `pandas`, `dotenv`).
-
-### Limitações conhecidas
-
-- Fluxo manual: `exportador.py` → JSON → `comparador.py` → HTML.
-- Tabelas a exportar definidas por lista hardcoded no `if __name__ == "__main__"`.
-- Assume schema `public` em todas as operações.
-- Não detecta reordenação de colunas.
-- Não há testes automatizados.
-- Não há CLI instalável.
-
----
-
-[0.2.0]: https://github.com/yurivski/DriftBrake/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/yurivski/DriftBrake/releases/tag/v0.1.0
+[0.0.1]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.1
