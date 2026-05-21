@@ -102,7 +102,7 @@ def init(
     typer.echo(f"     {total_tables} tabela(s) capturada(s) em {len(db_schema.schemas)} schema(s).")
 
 
-@app.command("check", help="Verifica o schema atual do banco contra o contrato e reporta divergências.")
+@app.command("check", help="Verifica divergências entre o banco de dados e o contrato de schema.")
 def check(
     db_url: Annotated[
         str | None,
@@ -174,7 +174,7 @@ def check(
     typer.echo("\n[OK] Schema compatível.")
 
 
-@app.command("diff", help="Compara dois schemas (arquivos JSON ou banco de dados) e exibe as diferenças.")
+@app.command("diff", help="Compara dois schemas (JSON ou banco de dados) e exibe as diferenças.")
 def diff(
     old: Annotated[
         str | None,
