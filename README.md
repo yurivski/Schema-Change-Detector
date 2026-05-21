@@ -2,48 +2,47 @@
 DriftBrake
 ==========
 
-DriftBrake é uma ferramenta Python para validar contratos de schema antes da execução de
-pipelines de dados.
+DriftBrake is a Python tool that validates schema contracts before data pipelines run.
 
-Ela lê automaticamente o schema atual do PostgreSQL, compara contra um contrato versionado,
-classifica mudanças por impacto (BREAKING, WARNING, SAFE) e bloqueia pipelines quando detectar
-mudanças incompatíveis, antes que elas causem falhas em produção.
-
-
-A ferramenta
-============
-
-  DriftBrake não é uma ferramenta de migration. Ela não aplica mudanças no banco e não gera
-  scripts SQL.
-
-  Ela atua ANTES da execução de pipelines, verificando se o banco real ainda respeita o
-  contrato esperado pelos consumidores de dados.
+It reads the current PostgreSQL schema automatically, compares it against a versioned
+contract, classifies changes by impact (BREAKING, WARNING, SAFE), and blocks pipelines
+when incompatible changes are detected, before they cause failures in production.
 
 
-Exemplo
+The tool
+========
+
+  DriftBrake is not a migration tool. It does not apply changes to the database and does
+  not generate SQL scripts.
+
+  It runs BEFORE pipelines, verifying that the actual database still respects the
+  contract expected by its data consumers.
+
+
+Example
 =======
 
-  Pipelines de dados quebram silenciosamente quando o schema do banco muda sem aviso:
+  Data pipelines fail silently when the database schema changes without warning:
 
-  - coluna removida ou renomeada
-  - tipo de dado alterado
-  - NOT NULL adicionado sem default
-  - foreign key modificada
+  - column removed or renamed
+  - data type altered
+  - NOT NULL added without a default
+  - foreign key modified
 
-  Essa ferramenta executa uma validação automática antes do pipeline começar e bloqueia a
-  execução se o banco não estiver compatível com o contrato esperado.
+  This tool runs an automatic validation before the pipeline starts and blocks the
+  execution if the database is no longer compatible with the expected contract.
 
-  Uso:
+  Usage:
 
-    driftbrake init     # cria o contrato schema.lock.json
-    driftbrake check    # verifica se o banco mudou
-    driftbrake diff     # compara dois estados sem tocar no contrato
+    driftbrake init     # creates the schema.lock.json contract
+    driftbrake check    # checks whether the database has changed
+    driftbrake diff     # compares two states without touching the contract
 
 
-Documentação
-============
+Documentation
+=============
 
-  - DOCUMENTATION.md  (Referência técnica completa: CLI, biblioteca Python, arquitetura)
-  - CHANGELOG.md      (Histórico de versões)
-  - Makefile          (Atalhos pra tarefas comuns do projeto)
+  - DOCUMENTATION.md - https://github.com/yurivski/driftbrake/blob/main/DOCUMENTATION.md
+  - CHANGELOG.md - https://github.com/yurivski/driftbrake/blob/main/CHANGELOG.md
+  - YML file - https://github.com/yurivski/driftbrake/blob/main/driftbrake.example.yml
 ```

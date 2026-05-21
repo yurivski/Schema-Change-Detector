@@ -7,18 +7,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 
-class Severity(StrEnum):
+class Severity(str, Enum):
     # Níveis de severidade para alterações de schema.
     BREAKING = "BREAKING"
     WARNING = "WARNING"
     SAFE = "SAFE"
 
 
-class ChangeType(StrEnum):
+class ChangeType(str, Enum):
     # Tipos de alterações de schema que podem ser detectadas.
     TABLE_ADDED = "table_added"
     TABLE_REMOVED = "table_removed"

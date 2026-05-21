@@ -4,35 +4,39 @@ build-backend = "hatchling.build"
 
 [project]
 name = "driftbrake"
-version = "0.2.0"
-description = "Schema Contract Guard - Validates schema contracts before data pipelines"
+version = "0.0.1"
+description = "Detect, classify, and block schema drift in PostgreSQL before your pipelines break"
 readme = "README.md"
-requires-python = ">=3.11"
-license = { text = "MIT" }
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Yuri Pontes", email = "yurilbrok23@gmail.com" },
 ]
 keywords = ["schema", "database", "data-engineering", "postgresql", "contract-testing"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Database",
     "Topic :: Software Development :: Quality Assurance",
 ]
 dependencies = [
-    "sqlalchemy>=2.0",
-    "psycopg2-binary",
-    "python-dotenv",
-    "pyyaml",
-    "jinja2",
-    "rich",
-    "typer",
+    "sqlalchemy>=2.0,<3.0",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.0",
+    "rich>=13.0",
+    "typer>=0.9",
 ]
 
 [project.optional-dependencies]
+postgres = ["psycopg2-binary>=2.9"]
 dev = [
     "pytest>=7.0",
     "pytest-cov",
@@ -42,11 +46,59 @@ dev = [
     "twine",
 ]
 
+[project.urls]
+Homepage = "https://github.com/yurivski/driftbrake"
+Repository = "https://github.com/yurivski/driftbrake"
+Issues = "https://github.com/yurivski/driftbrake/issues"
+Changelog = "https://github.com/yurivski/driftbrake/blob/main/CHANGELOG.md"
+
 [project.scripts]
 driftbrake = "driftbrake.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/driftbrake"]
+
+[tool.hatch.build]
+exclude = [
+    # venvs
+    ".venv*",
+    "venv",
+    
+    ".git",
+    ".github",
+    
+    ".gitignore",
+    ".gitattributes",
+    ".claude",
+    ".vscode",
+    ".idea",
+    
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    
+    "dist",
+    "build",
+    "*.egg-info",
+    
+    "tests",
+    "examples",
+    "imagens",
+    "fonte",
+    "DOCUMENTATION.md",
+    "CHANGELOG.md",
+    "Makefile",
+    "schema.lock.json",
+    
+    "uv.lock",
+    "requirements.txt",
+    
+    ".env",
+    ".env.*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
