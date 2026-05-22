@@ -39,6 +39,16 @@ Verifique a instalação:
 driftbrake --help
 ```
 
+Verifique a versão instalada:
+
+```bash
+driftbrake --version
+```
+
+```
+DriftBrake 0.0.2
+```
+
 ---
 </details>
 
@@ -170,6 +180,41 @@ DB_PASSWORD=secret
 
 <br>
 
+### 0. `--version` e `--info` — Verificar versão e ambiente
+
+#### `driftbrake --version`
+
+Exibe a versão instalada do DriftBrake e encerra.
+
+```bash
+driftbrake --version
+```
+
+```
+DriftBrake 0.0.2
+```
+
+<br>
+
+#### `driftbrake --info`
+
+Exibe informações completas sobre o ambiente de execução e encerra. Útil para reportar problemas.
+
+```bash
+driftbrake --info
+```
+
+```
+DriftBrake 0.0.2
+Python 3.13.5
+Platform Linux-6.5.0-parrot7-amd64
+SQLAlchemy 2.0.49
+```
+
+<br>
+
+---
+
 ### 1. `init` — Criar o contrato pela primeira vez
 
 Conecta ao seu PostgreSQL, lê a estrutura completa do banco (tabelas, colunas, tipos, constraints, índices) e salva tudo em um arquivo JSON. Esse arquivo se torna o contrato, a "foto" do estado atual do banco.
@@ -228,7 +273,7 @@ driftbrake init \
 {
   "contract_version": "1.0",
   "generated_by": "driftbrake",
-  "driftbrake_version": "0.2.0",
+  "driftbrake_version": "0.0.2",
   "database_type": "postgresql",
   "generated_at": "2026-05-19T10:30:00",
   "schemas": {
@@ -801,7 +846,7 @@ O contrato é gerado pelo comando `init` e deve ser versionado no Git. Represent
 {
   "contract_version": "1.0",
   "generated_by": "driftbrake",
-  "driftbrake_version": "0.2.0",
+  "driftbrake_version": "0.0.2",
   "database_type": "postgresql",
   "generated_at": "2026-05-19T10:00:00",
   "schemas": {

@@ -20,9 +20,14 @@ Códigos de saída:
 
 from __future__ import annotations
 
+import os
+import platform
+import sys
+from importlib.metadata import version as get_version
 from typing import Annotated
 
 import typer
+from dotenv import load_dotenv
 
 from driftbrake.comparators.schema_comparator import SchemaComparator
 from driftbrake.contracts.writer import ContractWriter
@@ -37,48 +42,87 @@ from driftbrake.reporters.terminal import TerminalReporter
 
 app = typer.Typer(
     name="driftbrake",
-    help="DriftBrake — Valide contratos de schema antes de executar pipelines de dados.",
+    help="DriftBrake — Validate schema contracts before running data pipelines.",
     add_completion=False,
 )
 
 
+def _version_callback(value: bool) -> None:
+    # Exibe a versão e encerra o processo.
+    if value:
+        v = get_version("driftbrake")
+        typer.echo(f"DriftBrake {v}")
+        raise typer.Exit()
+
+
+def _info_callback(value: bool) -> None:
+    # Exibe informações detalhadas sobre o ambiente e encerra o processo.
+    if value:
+        import sqlalchemy
+
+        v = get_version("driftbrake")
+        typer.echo(f"DriftBrake {v}")
+        typer.echo(f"Python {sys.version.split()[0]}")
+        typer.echo(f"Platform {platform.platform()}")
+        typer.echo(f"SQLAlchemy {sqlalchemy.__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show version and exit.",
+    ),
+    info: bool = typer.Option(
+        False,
+        "--info",
+        callback=_info_callback,
+        is_eager=True,
+        help="Show environment info (version, Python, platform, SQLAlchemy) and exit.",
+    ),
+) -> None:
+    pass
+
+
 def _build_db_url(db_url: str | None) -> str:
     # Resolve a URL do banco de dados a partir do argumento ou variáveis de ambiente.
-    import os
+    load_dotenv()
 
     if db_url:
         return db_url
-    url = os.getenv("DATABASE_URL")
-    if url:
-        return url
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "5432")
-    name = os.getenv("DB_NAME", "")
-    user = os.getenv("DB_USER", "")
-    password = os.getenv("DB_PASSWORD", "")
-    if not name or not user:
+    if database_url := os.getenv("DATABASE_URL"):
+        return database_url
+    if not os.getenv("DB_NAME") or not os.getenv("DB_USER"):
         typer.echo(
-            "[ERRO] URL do banco de dados não informada. "
-            "Defina --db-url ou a variável DATABASE_URL.",
+            "[ERROR] Database URL not provided. "
+            "Set --db-url or the DATABASE_URL environment variable.",
             err=True,
         )
         raise typer.Exit(3)
-    return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+    return (
+        f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD', '')}"
+        f"@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '5432')}"
+        f"/{os.getenv('DB_NAME')}"
+    )
 
 
-@app.command("init", help="Inicializa um contrato de schema conectando ao banco de dados.")
+@app.command("init", help="Initialize a schema contract by connecting to the database.")
 def init(
     db_url: Annotated[
         str | None,
-        typer.Option("--db-url", help="URL de conexão com o banco de dados."),
+        typer.Option("--db-url", help="Database connection URL."),
     ] = None,
     schemas: Annotated[
         str,
-        typer.Option("--schemas", help="Lista de schemas separados por vírgula."),
+        typer.Option("--schemas", help="Comma-separated list of schemas to capture."),
     ] = "public",
     output: Annotated[
         str,
-        typer.Option("--output", help="Caminho de saída para o arquivo de contrato de schema."),
+        typer.Option("--output", help="Output path for the schema contract file."),
     ] = "schema.lock.json",
 ) -> None:
     # Inicializa um novo contrato de schema a partir de um banco de dados ativo.
@@ -86,51 +130,54 @@ def init(
     url = _build_db_url(db_url)
     schema_list = [s.strip() for s in schemas.split(",") if s.strip()]
 
-    typer.echo(f"Conectando ao banco de dados e lendo o schema ({', '.join(schema_list)})...")
+    typer.echo(f"Connecting to database and reading schema ({', '.join(schema_list)})...")
     try:
         reader = PostgresSchemaReader(database_url=url, schemas=schema_list)
         db_schema = reader.read()
     except SchemaConnectionError as exc:
-        typer.echo(f"[ERRO] Falha na conexão: {exc}", err=True)
+        typer.echo(f"[ERROR] Connection failed: {exc}", err=True)
         raise typer.Exit(3)
 
     writer = ContractWriter(output)
     writer.write(db_schema)
-    typer.echo(f"[OK] Contrato de schema salvo em: {output}")
+    typer.echo(f"[OK] Schema contract saved to: {output}")
 
     total_tables = sum(len(tables) for tables in db_schema.schemas.values())
-    typer.echo(f"     {total_tables} tabela(s) capturada(s) em {len(db_schema.schemas)} schema(s).")
+    typer.echo(f"     {total_tables} table(s) captured across {len(db_schema.schemas)} schema(s).")
 
 
-@app.command("check", help="Verifica divergências entre o banco de dados e o contrato de schema.")
+@app.command(
+    "check",
+    help="Check for divergences between the live database and the schema contract.",
+)
 def check(
     db_url: Annotated[
         str | None,
-        typer.Option("--db-url", help="URL de conexão com o banco de dados."),
+        typer.Option("--db-url", help="Database connection URL."),
     ] = None,
     contract: Annotated[
         str,
-        typer.Option("--contract", help="Caminho para o arquivo de contrato schema.lock.json."),
+        typer.Option("--contract", help="Path to the schema.lock.json contract file."),
     ] = "schema.lock.json",
     fail_on: Annotated[
         str,
-        typer.Option("--fail-on", help="Níveis de severidade por vírgula que causam falha."),
+        typer.Option("--fail-on", help="Severity levels (comma-sep.) that cause a non-zero exit."),
     ] = "BREAKING",
     json_output: Annotated[
         str | None,
-        typer.Option("--json", help="Grava o relatório de diff em JSON neste caminho."),
+        typer.Option("--json", help="Write the diff report as JSON to this path."),
     ] = None,
     html_output: Annotated[
         str | None,
-        typer.Option("--html", help="Grava o relatório de diff em HTML neste caminho."),
+        typer.Option("--html", help="Write the diff report as HTML to this path."),
     ] = None,
     markdown_output: Annotated[
         str | None,
-        typer.Option("--markdown", help="Grava o relatório de diff em Markdown neste caminho."),
+        typer.Option("--markdown", help="Write the diff report as Markdown to this path."),
     ] = None,
     config: Annotated[
         str | None,
-        typer.Option("--config", help="Caminho para o arquivo de configuração driftbrake.yml."),
+        typer.Option("--config", help="Path to the driftbrake.yml configuration file."),
     ] = None,
 ) -> None:
     # Compara o schema do banco de dados ativo contra um arquivo de contrato.
@@ -149,13 +196,13 @@ def check(
         )
         result = guard.check()
     except SchemaConnectionError as exc:
-        typer.echo(f"[ERRO] Falha na conexão: {exc}", err=True)
+        typer.echo(f"[ERROR] Connection failed: {exc}", err=True)
         raise typer.Exit(3)
     except SchemaContractNotFoundError as exc:
-        typer.echo(f"[ERRO] Erro no contrato: {exc}", err=True)
+        typer.echo(f"[ERROR] Contract error: {exc}", err=True)
         raise typer.Exit(4)
     except Exception as exc:
-        typer.echo(f"[ERRO] Erro inesperado: {exc}", err=True)
+        typer.echo(f"[ERROR] Unexpected error: {exc}", err=True)
         raise typer.Exit(6)
 
     guard.save_reports(result)
@@ -165,42 +212,42 @@ def check(
     failing = [c for c in result.changes if c.severity in fail_severities]
     if failing:
         typer.echo(
-            f"\n[FALHA] {len(failing)} alteração(ões) acima do limiar ({fail_on}). "
-            "Saindo com código 2.",
+            f"\n[FAILED] {len(failing)} change(s) above threshold ({fail_on}). "
+            "Exiting with code 2.",
             err=True,
         )
         raise typer.Exit(2)
 
-    typer.echo("\n[OK] Schema compatível.")
+    typer.echo("\n[OK] Schema is compatible.")
 
 
-@app.command("diff", help="Compara dois schemas (JSON ou banco de dados) e exibe as diferenças.")
+@app.command("diff", help="Compare two schemas (JSON files or database) and show differences.")
 def diff(
     old: Annotated[
         str | None,
-        typer.Option("--old", help="Caminho para o arquivo JSON do schema antigo."),
+        typer.Option("--old", help="Path to the JSON file representing the expected (old) schema."),
     ] = None,
     new: Annotated[
         str | None,
-        typer.Option("--new", help="Caminho para o arquivo JSON do schema novo."),
+        typer.Option("--new", help="Path to the JSON file representing the current (new) schema."),
     ] = None,
     new_db: Annotated[
         str | None,
-        typer.Option("--new-db", help="URL do banco de dados a ser usado como schema 'novo'."),
+        typer.Option("--new-db", help="Database URL to use as the current (new) schema."),
     ] = None,
     json_output: Annotated[
         str | None,
-        typer.Option("--json", help="Grava o relatório de diff em JSON neste caminho."),
+        typer.Option("--json", help="Write the diff report as JSON to this path."),
     ] = None,
     html_output: Annotated[
         str | None,
-        typer.Option("--html", help="Grava o relatório de diff em HTML neste caminho."),
+        typer.Option("--html", help="Write the diff report as HTML to this path."),
     ] = None,
 ) -> None:
     # Compara duas fontes de schema (arquivos ou um arquivo contra um banco de dados ativo).
 
     if not old:
-        typer.echo("[ERRO] --old é obrigatório.", err=True)
+        typer.echo("[ERROR] --old is required.", err=True)
         raise typer.Exit(6)
 
     try:
@@ -218,13 +265,13 @@ def diff(
             current = JsonSchemaReader(new).read()
             current_source = new
         else:
-            typer.echo("[ERRO] Informe --new ou --new-db.", err=True)
+            typer.echo("[ERROR] Provide --new or --new-db.", err=True)
             raise typer.Exit(6)
     except SchemaConnectionError as exc:
-        typer.echo(f"[ERRO] {exc}", err=True)
+        typer.echo(f"[ERROR] {exc}", err=True)
         raise typer.Exit(3)
     except SchemaContractNotFoundError as exc:
-        typer.echo(f"[ERRO] {exc}", err=True)
+        typer.echo(f"[ERROR] {exc}", err=True)
         raise typer.Exit(4)
 
     comparator = SchemaComparator()
@@ -235,93 +282,93 @@ def diff(
         current_source=current_source,
     )
 
-    TerminalReporter().print(result)
+    TerminalReporter(mode="diff").print(result)
 
     if json_output:
         JsonReporter(json_output).write(result)
-        typer.echo(f"Relatório JSON: {json_output}")
+        typer.echo(f"JSON report: {json_output}")
     if html_output:
         try:
             HtmlReporter(html_output).write(result)
-            typer.echo(f"Relatório HTML: {html_output}")
+            typer.echo(f"HTML report: {html_output}")
         except FileNotFoundError as exc:
-            typer.echo(f"[AVISO] Relatório HTML ignorado: {exc}", err=True)
+            typer.echo(f"[WARNING] HTML report skipped: {exc}", err=True)
 
 
-@app.command("snapshot")
+@app.command("snapshot", help="Capture the current database schema without comparing.")
 def snapshot(
     db_url: Annotated[
         str | None,
-        typer.Option("--db-url", help="URL de conexão com o banco de dados."),
+        typer.Option("--db-url", help="Database connection URL."),
     ] = None,
     output: Annotated[
         str,
-        typer.Option("--output", help="Caminho de saída para o arquivo JSON de snapshot."),
+        typer.Option("--output", help="Output path for the snapshot JSON file."),
     ] = "schema.snapshot.json",
     schemas: Annotated[
         str,
-        typer.Option("--schemas", help="Lista de schemas separados por vírgula."),
+        typer.Option("--schemas", help="Comma-separated list of schemas to capture."),
     ] = "public",
 ) -> None:
-    """Captura um snapshot do schema atual do banco de dados sem realizar comparação."""
+    """Captures a snapshot of the current database schema without comparing."""
     url = _build_db_url(db_url)
     schema_list = [s.strip() for s in schemas.split(",") if s.strip()]
 
-    typer.echo(f"Capturando snapshot do schema de {url.split('@')[-1]}...")
+    typer.echo(f"Capturing schema snapshot from {url.split('@')[-1]}...")
     try:
         reader = PostgresSchemaReader(database_url=url, schemas=schema_list)
         db_schema = reader.read()
     except SchemaConnectionError as exc:
-        typer.echo(f"[ERRO] {exc}", err=True)
+        typer.echo(f"[ERROR] {exc}", err=True)
         raise typer.Exit(3)
 
     ContractWriter(output).write(db_schema)
     total_tables = sum(len(t) for t in db_schema.schemas.values())
-    typer.echo(f"[OK] Snapshot salvo em {output} ({total_tables} tabelas).")
+    typer.echo(f"[OK] Snapshot saved to {output} ({total_tables} tables).")
 
 
-@app.command("update-contract")
+@app.command("update-contract", help="Update the schema contract to match the current database.")
 def update_contract(
     db_url: Annotated[
         str | None,
-        typer.Option("--db-url", help="URL de conexão com o banco de dados."),
+        typer.Option("--db-url", help="Database connection URL."),
     ] = None,
     contract: Annotated[
         str,
-        typer.Option("--contract", help="Caminho para o schema.lock.json a ser atualizado."),
+        typer.Option("--contract", help="Path to the schema.lock.json to be updated."),
     ] = "schema.lock.json",
     yes: Annotated[
         bool,
-        typer.Option("--yes", "-y", help="Pula a confirmação interativa."),
+        typer.Option("--yes", "-y", help="Skip the interactive confirmation prompt."),
     ] = False,
     schemas: Annotated[
         str,
-        typer.Option("--schemas", help="Lista de schemas separados por vírgula."),
+        typer.Option("--schemas", help="Comma-separated list of schemas to capture."),
     ] = "public",
 ) -> None:
-    """Atualiza o contrato de schema para refletir o estado atual do banco de dados."""
+    """Updates the schema contract to reflect the current state of the database."""
     url = _build_db_url(db_url)
     schema_list = [s.strip() for s in schemas.split(",") if s.strip()]
 
     if not yes:
         confirmed = typer.confirm(
-            f"Isso irá sobrescrever '{contract}' com o schema atual do banco de dados. Continuar?"
+            f"This will overwrite '{contract}' with the current database schema. Continue?"
         )
         if not confirmed:
-            typer.echo("Operação cancelada.")
+            typer.echo("Operation cancelled.")
             raise typer.Exit(0)
 
-    typer.echo("Lendo o schema atual do banco de dados...")
+    typer.echo("Reading current database schema...")
     try:
         reader = PostgresSchemaReader(database_url=url, schemas=schema_list)
         db_schema = reader.read()
     except SchemaConnectionError as exc:
-        typer.echo(f"[ERRO] {exc}", err=True)
+        typer.echo(f"[ERROR] {exc}", err=True)
         raise typer.Exit(3)
 
     ContractWriter(contract).write(db_schema)
     total_tables = sum(len(t) for t in db_schema.schemas.values())
-    typer.echo(f"[OK] Contrato atualizado: {contract} ({total_tables} tabelas).")
+    typer.echo(f"[OK] Contract updated: {contract} ({total_tables} tables).")
 
 
 if __name__ == "__main__":

@@ -1,67 +1,25 @@
-"""
-Reporter HTML - gera relatórios HTML usando os templates existentes em templates/.
-
-Adapta os templates legados {{placeholder}} para o novo modelo DiffResult
-usando Jinja2 para renderização.
-"""
+# Reporter HTML - gera relatórios HTML usando os templates do pacote via Jinja2 PackageLoader.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Any
+from jinja2 import Environment, FileSystemLoader, PackageLoader
 
 from driftbrake.models import DiffResult, SchemaChange, Severity
 
-_TEMPLATES_DIR = Path(__file__).parent.parent.parent.parent.parent / "templates"
 
-
-def _find_templates_dir() -> Path:
-    """
-    Localiza o diretório templates/ relativo à raiz do projeto.
-
-    Pesquisa a partir do local do arquivo para cima até encontrar um diretório
-    contendo base.html.
-    """
-    candidates = [
-        Path(__file__).parent.parent.parent.parent.parent / "templates",
-        Path(__file__).parent.parent.parent.parent / "templates",
-        Path(__file__).parent.parent.parent / "templates",
-        Path("templates"),
-    ]
-    for candidate in candidates:
-        if candidate.exists() and (candidate / "base.html").exists():
-            return candidate
-    raise FileNotFoundError(
-        "Could not find the templates/ directory. "
-        "Make sure it exists at the project root."
-    )
-
-
-def _render_template(template_str: str, context: dict[str, Any]) -> str:
-    """
-    Renderiza uma string de template usando Jinja2 se disponível,
-    caindo para substituição simples {{key}} caso contrário.
-    """
-    try:
-        from jinja2 import BaseLoader, Environment
-        env = Environment(loader=BaseLoader(), autoescape=False)
-        # Converte {{key}} para {{ key }} para compatibilidade com Jinja2
-        jinja_template = re.sub(r"\{\{(\w+)\}\}", r"{{ \1 }}", template_str)
-        tpl = env.from_string(jinja_template)
-        return tpl.render(**context)
-    except ImportError:
-        result = template_str
-        for key, value in context.items():
-            result = result.replace(f"{{{{{key}}}}}", str(value))
-        return result
+def _make_env(templates_dir: Path | None):
+    # Cria o ambiente Jinja2. Usa PackageLoader quando nenhum diretório explícito é passado.
+    if templates_dir is not None:
+        return Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=False)
+    return Environment(loader=PackageLoader("driftbrake", "templates"), autoescape=False)
 
 
 class HtmlReporter:
     """
-    Gera um relatório HTML de alterações de schema usando templates legados.
-
-    Os templates usam sintaxe {{placeholder}} e estão localizados em templates/.
+    Gera um relatório HTML de alterações de schema usando templates Jinja2.
+    Por padrão os templates são carregados via PackageLoader.
     """
 
     def __init__(
@@ -70,35 +28,26 @@ class HtmlReporter:
         templates_dir: str | Path | None = None,
     ) -> None:
         self.output_path = Path(output_path)
-        if templates_dir is not None:
-            self.templates_dir = Path(templates_dir)
-        else:
-            self.templates_dir = _find_templates_dir()
+        _dir = Path(templates_dir) if templates_dir is not None else None
+        self._env = _make_env(_dir)
 
-    def _load_template(self, name: str) -> str:
-        path = self.templates_dir / f"{name}.html"
-        if not path.exists():
-            raise FileNotFoundError(f"Template not found: {path}")
-        return path.read_text(encoding="utf-8")
+    def _render(self, name: str, context: dict[str, Any]) -> str:
+        # Renderiza um template pelo nome usando o ambiente Jinja2 configurado.
+        tpl = self._env.get_template(f"{name}.html")
+        return tpl.render(**context)
 
     def write(self, result: DiffResult) -> None:
-        """
-        Renderiza e grava o relatório HTML no disco.
-        result: O DiffResult a ser renderizado.
-        """
+        # Renderiza e grava o relatório HTML no disco.
         html = self.render(result)
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.output_path.write_text(html, encoding="utf-8")
 
     def render(self, result: DiffResult) -> str:
         # Renderiza o relatório HTML completo como string.
-        base_template = self._load_template("base")
         tabelas_html = self._render_all_tables(result)
-
         timestamp = result.compared_at.strftime("%d/%m/%Y às %H:%M:%S")
-
-        return _render_template(
-            base_template,
+        return self._render(
+            "base",
             {
                 "timestamp": timestamp,
                 "total_breaking": result.total_breaking,
@@ -136,9 +85,8 @@ class HtmlReporter:
             if safe:
                 sections_html += self._render_section(safe, "safe")
 
-            table_template = self._load_template("tabela")
-            table_html = _render_template(
-                table_template,
+            table_html = self._render(
+                "tabela",
                 {
                     "nome_tabela": table_display,
                     "breaking": len(breaking),
@@ -152,15 +100,8 @@ class HtmlReporter:
         return "\n".join(html_parts)
 
     def _render_section(self, changes: list[SchemaChange], tipo: str) -> str:
-        template = self._load_template(f"secao_{tipo}")
         rows = "".join(self._render_row(change, tipo) for change in changes)
-        return _render_template(
-            template,
-            {
-                "count": len(changes),
-                "linhas": rows,
-            },
-        )
+        return self._render(f"secao_{tipo}", {"count": len(changes), "linhas": rows})
 
     def _render_row(self, change: SchemaChange, tipo: str) -> str:
         col = f"<code>{change.column_name}</code>" if change.column_name else "—"

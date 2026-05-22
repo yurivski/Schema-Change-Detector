@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import json
+from importlib.metadata import version as _get_version
 from pathlib import Path
 
 from driftbrake.models import DatabaseSchema
-
-DRIFTBRAKE_VERSION = "0.2.0"
 
 
 class ContractWriter:
@@ -39,7 +38,7 @@ class ContractWriter:
         return {
             "contract_version": "1.0",
             "generated_by": "driftbrake",
-            "driftbrake_version": DRIFTBRAKE_VERSION,
+            "driftbrake_version": _get_version("driftbrake"),
             "database_type": schema.database_type,
             "generated_at": schema.generated_at.isoformat(),
             "schemas": serialized_schemas,

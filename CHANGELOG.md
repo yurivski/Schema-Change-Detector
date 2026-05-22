@@ -6,6 +6,47 @@
 
 <br>
 
+## [0.0.2]
+
+### Corrigido
+
+- **`load_dotenv()` não chamado automaticamente:** a CLI agora chama `load_dotenv()` antes de
+  qualquer leitura de variável de ambiente, garantindo que arquivos `.env` no diretório atual
+  sejam carregados automaticamente. Comportamento anterior exigia `source .env` manual no shell.
+- **`driftbrake_version` desatualizada nos contratos:** o campo `driftbrake_version` no
+  `schema.lock.json` agora é lido dinamicamente via `importlib.metadata.version()`, eliminando
+  a versão hardcoded `"0.2.0"` que era gerada independente da versão instalada.
+- **Mensagem "DRIFTBRAKE CHECK FAILED" no output do `diff`:** o comando `diff` é exploratório
+  e sempre retorna exit code 0. A mensagem final agora exibe "DIFFERENCES DETECTED" (em amarelo)
+  em vez de "DRIFTBRAKE CHECK FAILED" (em vermelho), eliminando a confusão entre falha real e
+  resultado informativo.
+- **Templates HTML fora do pacote (não incluídos na wheel):** a pasta `templates/` foi movida
+  para dentro de `src/driftbrake/templates/`. O `html_report.py` agora carrega os templates via
+  `PackageLoader("driftbrake", "templates")`, garantindo funcionamento tanto em editable install
+  quanto em wheel publicada. O `pyproject.toml` foi atualizado com `include` para `.html`.
+
+### Adicionado
+
+- **`driftbrake --version`:** exibe a versão instalada e encerra. Exemplo:
+  ```
+  DriftBrake 0.0.2
+  ```
+- **`driftbrake --info`:** exibe informações completas do ambiente e encerra. Exemplo:
+  ```
+  DriftBrake 0.0.2
+  Python 3.13.5
+  Platform Linux-6.5.0-parrot
+  SQLAlchemy 2.0.49
+  ```
+- **Idioma da CLI:** todas as legendas, descrições e mensagens dos comandos da CLI foram
+  traduzidas para inglês. Comentários internos do código permanecem em português (Brasil).
+- **Separadores visuais no resumo:** a tabela de resumo no terminal agora exibe separadores
+  entre as linhas (`show_lines=True`), tornando a leitura mais clara.
+- **Colapso quando não há mudanças:** quando a comparação retorna 0 alterações, o output
+  colapsa para uma linha única: `Schemas compatible — 0 changes detected.`
+
+---
+
 ## [0.0.1]
 
 ### Publicação
@@ -17,11 +58,6 @@
 - `[project.urls]` e classifiers completos adicionados ao `pyproject.toml`.
 - README traduzido para inglês.
 - Dependências refatoradas: `psycopg2` movido para extras `[postgres]`.
-
-### Bugs identificados
-
-- `TypeError` em `foreign_key` durante comparação de colunas.
-- Templates HTML fora do pacote (não incluídos na wheel).
 
 ### Adicionado
 
