@@ -31,12 +31,9 @@ class MarkdownReporter:
 
         lines.append("## Schema Change Report")
         lines.append("")
+        lines.append(f"**Compared at:** {result.compared_at.strftime('%Y-%m-%d %H:%M:%S')}  ")
         lines.append(
-            f"**Compared at:** {result.compared_at.strftime('%Y-%m-%d %H:%M:%S')}  "
-        )
-        lines.append(
-            f"**Expected:** `{result.expected_source}`  "
-            f"**Current:** `{result.current_source}`"
+            f"**Expected:** `{result.expected_source}`  **Current:** `{result.current_source}`"
         )
         lines.append("")
 

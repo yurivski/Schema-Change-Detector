@@ -124,9 +124,7 @@ class SchemaComparator:
         added_cols = current_cols - expected_cols
 
         # Detecta possíveis renomeações antes de reportar adições/remoções separadamente
-        rename_pairs = self._detect_possible_renames(
-            expected, current, removed_cols, added_cols
-        )
+        rename_pairs = self._detect_possible_renames(expected, current, removed_cols, added_cols)
         renamed_removed = {pair[0] for pair in rename_pairs}
         renamed_added = {pair[1] for pair in rename_pairs}
 
@@ -414,9 +412,8 @@ class SchemaComparator:
                     confidence = "low"
 
                 # Prioriza o melhor candidato encontrado
-                if (
-                    best_match is None
-                    or self._confidence_rank(confidence) > self._confidence_rank(best_confidence)
+                if best_match is None or self._confidence_rank(confidence) > self._confidence_rank(
+                    best_confidence
                 ):
                     best_match = added
                     best_confidence = confidence

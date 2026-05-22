@@ -106,7 +106,7 @@ class SchemaGuard:
 
         Lê o schema atual do banco de dados e o schema esperado do arquivo de
         contrato, então os compara.
-        
+
         DiffResult: Todas as alterações detectadas com classificações de severidade.
         """
         reader = PostgresSchemaReader(
@@ -128,9 +128,7 @@ class SchemaGuard:
             current=current_schema,
             expected_source=str(self.contract_path),
             current_source=(
-                self.database_url.split("@")[-1]
-                if "@" in self.database_url
-                else self.database_url
+                self.database_url.split("@")[-1] if "@" in self.database_url else self.database_url
             ),
         )
         return result
@@ -152,6 +150,7 @@ class SchemaGuard:
             sys.exit(3)
         except Exception as exc:
             from driftbrake.exceptions import SchemaContractNotFoundError
+
             if isinstance(exc, SchemaContractNotFoundError):
                 print(f"[ERROR] Contract error: {exc}", file=sys.stderr)
                 sys.exit(4)

@@ -48,15 +48,11 @@ class ContractLoader:
         missing = REQUIRED_FIELDS - set(data.keys())
         if missing:
             raise SchemaContractNotFoundError(
-                f"Schema contract is missing required fields: {missing}. "
-                f"File: {self.path}"
+                f"Schema contract is missing required fields: {missing}. File: {self.path}"
             )
 
         # Aceita formato legado (schema_detector_version) e novo (driftbrake_version)
-        has_version = (
-            "driftbrake_version" in data
-            or "schema_detector_version" in data
-        )
+        has_version = "driftbrake_version" in data or "schema_detector_version" in data
         if not has_version:
             raise SchemaContractNotFoundError(
                 f"Schema contract is missing version field ('driftbrake_version'). "

@@ -24,14 +24,12 @@ class JsonSchemaReader(SchemaReader):
     def read(self) -> DatabaseSchema:
         """
         Lê o arquivo de lock de schema e retorna um DatabaseSchema.
-            
+
         DatabaseSchema: O schema representado no lock file.
         SchemaContractNotFoundError: Se o arquivo não existir ou for inválido.
         """
         if not self.path.exists():
-            raise SchemaContractNotFoundError(
-                f"Schema contract file not found: {self.path}"
-            )
+            raise SchemaContractNotFoundError(f"Schema contract file not found: {self.path}")
 
         try:
             with self.path.open("r", encoding="utf-8") as f:

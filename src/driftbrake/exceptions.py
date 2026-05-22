@@ -1,5 +1,6 @@
 # Exceções personalizadas do DriftBrake.
 
+
 class SchemaDetectorError(Exception):
     """Exceção base para todos os erros do schema detector."""
 

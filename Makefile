@@ -16,7 +16,11 @@ format:
 typecheck:
 	mypy src
 
-check: lint typecheck test
+check:
+	lint typecheck test
+	ruff check src tests
+	mypy src
+	pytest
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
@@ -24,3 +28,7 @@ clean:
 	rm -rf .mypy_cache .ruff_cache .pytest_cache htmlcov dist build
 
 .PHONY: install test test-cov lint format typecheck check clean
+
+fix:
+	ruff check --fix src tests
+	ruff format src tests

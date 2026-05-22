@@ -31,6 +31,7 @@ Para instalar com dependências de desenvolvimento:
 
 ```bash
 pip install -e ".[dev]"
+pre-commit install
 ```
 
 Verifique a instalação:

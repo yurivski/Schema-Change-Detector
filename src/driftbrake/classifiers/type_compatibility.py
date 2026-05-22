@@ -17,39 +17,32 @@ _COMPAT_RULES: list[tuple[str, str, Severity]] = [
     # Expansões de VARCHAR: seguro
     ("varchar", "text", Severity.SAFE),
     ("character varying", "text", Severity.SAFE),
-
     # Alargamento numérico: seguro (tipos menores promovidos)
     ("smallint", "integer", Severity.SAFE),
     ("smallint", "bigint", Severity.SAFE),
     ("real", "double precision", Severity.SAFE),
-
     # Estreitamento numérico: crítico
     ("bigint", "integer", Severity.BREAKING),
     ("bigint", "smallint", Severity.BREAKING),
     ("integer", "smallint", Severity.BREAKING),
     ("double precision", "real", Severity.BREAKING),
-
     # integer -> bigint: aviso (alargamento, mas pode afetar o comportamento da app / tipos ORM)
     ("integer", "bigint", Severity.WARNING),
-
     # Data/hora: date -> timestamp é aviso (sem perda de dados, mas semântica muda)
     ("date", "timestamp", Severity.WARNING),
     ("timestamp", "date", Severity.BREAKING),
     ("timestamp", "timestamptz", Severity.WARNING),
     ("timestamptz", "timestamp", Severity.WARNING),
-
     # Estreitamento de text/varchar: crítico
     ("text", "varchar", Severity.BREAKING),
     ("text", "character varying", Severity.BREAKING),
     ("text", "numeric", Severity.BREAKING),
     ("text", "integer", Severity.BREAKING),
     ("text", "bigint", Severity.BREAKING),
-
     # numeric para text: crítico
     ("numeric", "text", Severity.BREAKING),
     ("integer", "text", Severity.WARNING),
     ("bigint", "text", Severity.WARNING),
-
     # Alterações de boolean: crítico
     ("boolean", "integer", Severity.BREAKING),
     ("integer", "boolean", Severity.BREAKING),

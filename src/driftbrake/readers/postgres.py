@@ -98,9 +98,7 @@ class PostgresSchemaReader(SchemaReader):
             ordinal_position=ordinal_position,
         )
 
-    def _read_table(
-        self, inspector: Any, schema_name: str, table_name: str
-    ) -> TableSchema:
+    def _read_table(self, inspector: Any, schema_name: str, table_name: str) -> TableSchema:
         columns = inspector.get_columns(table_name, schema=schema_name)
         pk_info = inspector.get_pk_constraint(table_name, schema=schema_name)
         fk_info = inspector.get_foreign_keys(table_name, schema=schema_name)
@@ -112,9 +110,7 @@ class PostgresSchemaReader(SchemaReader):
         col_schemas: dict[str, ColumnSchema] = {}
 
         for ordinal, col in enumerate(columns, start=1):
-            col_schema = self._extract_column(
-                col, pk_columns, unique_constraints, fk_info, ordinal
-            )
+            col_schema = self._extract_column(col, pk_columns, unique_constraints, fk_info, ordinal)
             col_schemas[col_schema.name] = col_schema
 
         return TableSchema(
@@ -145,9 +141,7 @@ class PostgresSchemaReader(SchemaReader):
             engine = create_engine(self.database_url)
             inspector = sa_inspect(engine)
         except Exception as exc:
-            raise SchemaConnectionError(
-                f"Failed to connect to the database: {exc}"
-            ) from exc
+            raise SchemaConnectionError(f"Failed to connect to the database: {exc}") from exc
 
         db_schemas: dict[str, dict[str, TableSchema]] = {}
 

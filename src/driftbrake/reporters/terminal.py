@@ -90,9 +90,7 @@ class TerminalReporter:
         summary_table.add_row("Safe Changes", f"[bold green]{result.total_safe}[/bold green]")
         summary_table.add_row("Total Changes", str(len(result.changes)))
         compatible_label = (
-            "[bold green]Yes[/bold green]"
-            if result.is_compatible
-            else "[bold red]No[/bold red]"
+            "[bold green]Yes[/bold green]" if result.is_compatible else "[bold red]No[/bold red]"
         )
         summary_table.add_row("Compatible", compatible_label)
         console.print(summary_table)

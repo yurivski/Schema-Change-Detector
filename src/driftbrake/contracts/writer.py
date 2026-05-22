@@ -30,8 +30,7 @@ class ContractWriter:
         for schema_name, tables in schema.schemas.items():
             serialized_schemas[schema_name] = {
                 "tables": {
-                    table_name: self._serialize_table(table)
-                    for table_name, table in tables.items()
+                    table_name: self._serialize_table(table) for table_name, table in tables.items()
                 }
             }
 
@@ -46,10 +45,7 @@ class ContractWriter:
 
     def _serialize_table(self, table) -> dict:
         return {
-            "columns": {
-                col_name: col.to_dict()
-                for col_name, col in table.columns.items()
-            },
+            "columns": {col_name: col.to_dict() for col_name, col in table.columns.items()},
             "indexes": table.indexes,
             "check_constraints": table.check_constraints,
         }

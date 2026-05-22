@@ -44,6 +44,7 @@ dev = [
     "mypy",
     "build",
     "twine",
+    "pre-commit",
 ]
 
 [project.urls]

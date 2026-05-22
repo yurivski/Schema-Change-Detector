@@ -27,6 +27,8 @@
 
 ### Adicionado
 
+- **pre-commit:** Cada `git commit` roda o ruff automaticamente. Se tiver erro de lint, o commit é bloqueado até tu corrigir.
+
 - **`driftbrake --version`:** exibe a versão instalada e encerra. Exemplo:
   ```
   DriftBrake 0.0.2

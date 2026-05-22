@@ -65,9 +65,17 @@ comparator = SchemaComparator()
 
 class TestColumnRemoved:
     def test_column_removed_is_breaking(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id"), "name": _make_col("name"),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id"),
+                        "name": _make_col("name"),
+                    },
+                )
+            }
+        )
         current = _make_db({"t": _make_table("t", columns={"id": _make_col("id")})})
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.COLUMN_REMOVED]
@@ -80,12 +88,21 @@ class TestColumnRemoved:
 class TestColumnAddedNullable:
     def test_column_added_nullable_is_safe(self):
         expected = _make_db({"t": _make_table("t", columns={"id": _make_col("id")})})
-        current = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id"), "new_col": _make_col("new_col", nullable=True),
-        })})
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id"),
+                        "new_col": _make_col("new_col", nullable=True),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "new_col"
         ]
         assert len(changes) == 1
@@ -95,13 +112,21 @@ class TestColumnAddedNullable:
 class TestColumnAddedNotNullWithoutDefault:
     def test_column_added_not_null_no_default_is_breaking(self):
         expected = _make_db({"t": _make_table("t", columns={"id": _make_col("id")})})
-        current = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id"),
-            "required": _make_col("required", nullable=False, default=None),
-        })})
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id"),
+                        "required": _make_col("required", nullable=False, default=None),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "required"
         ]
         assert len(changes) == 1
@@ -111,13 +136,21 @@ class TestColumnAddedNotNullWithoutDefault:
 class TestColumnAddedNotNullWithDefault:
     def test_column_added_not_null_with_default_is_warning(self):
         expected = _make_db({"t": _make_table("t", columns={"id": _make_col("id")})})
-        current = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id"),
-            "required": _make_col("required", nullable=False, default="'default_val'"),
-        })})
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id"),
+                        "required": _make_col("required", nullable=False, default="'default_val'"),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "required"
         ]
         assert len(changes) == 1
@@ -126,36 +159,78 @@ class TestColumnAddedNotNullWithDefault:
 
 class TestTypeChanged:
     def test_type_changed_varchar_narrowing_is_breaking(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "name": _make_col("name", type_="VARCHAR(100)"),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "name": _make_col("name", type_="VARCHAR(50)"),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "name": _make_col("name", type_="VARCHAR(100)"),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "name": _make_col("name", type_="VARCHAR(50)"),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.TYPE_CHANGED]
         assert len(changes) == 1
         assert changes[0].severity == Severity.BREAKING
 
     def test_type_changed_varchar_widening_is_safe(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "name": _make_col("name", type_="VARCHAR(50)"),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "name": _make_col("name", type_="VARCHAR(100)"),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "name": _make_col("name", type_="VARCHAR(50)"),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "name": _make_col("name", type_="VARCHAR(100)"),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.TYPE_CHANGED]
         assert len(changes) == 1
         assert changes[0].severity == Severity.SAFE
 
     def test_type_changed_integer_to_bigint_is_warning(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "val": _make_col("val", type_="integer"),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "val": _make_col("val", type_="bigint"),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "val": _make_col("val", type_="integer"),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "val": _make_col("val", type_="bigint"),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.TYPE_CHANGED]
         assert len(changes) == 1
@@ -164,24 +239,52 @@ class TestTypeChanged:
 
 class TestNullableChanged:
     def test_not_null_added_is_breaking(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", nullable=True),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", nullable=False),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", nullable=True),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", nullable=False),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.NULLABLE_CHANGED]
         assert len(changes) == 1
         assert changes[0].severity == Severity.BREAKING
 
     def test_not_null_removed_is_warning(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", nullable=False),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", nullable=True),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", nullable=False),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", nullable=True),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.NULLABLE_CHANGED]
         assert len(changes) == 1
@@ -190,12 +293,26 @@ class TestNullableChanged:
 
 class TestPrimaryKeyChanged:
     def test_primary_key_changed_is_breaking(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id", primary_key=True),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "id": _make_col("id", primary_key=False),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id", primary_key=True),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "id": _make_col("id", primary_key=False),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.PRIMARY_KEY_CHANGED]
         assert len(changes) == 1
@@ -204,12 +321,26 @@ class TestPrimaryKeyChanged:
 
 class TestUniqueChanged:
     def test_unique_changed_is_warning(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "email": _make_col("email", unique=True),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "email": _make_col("email", unique=False),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "email": _make_col("email", unique=True),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "email": _make_col("email", unique=False),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [c for c in result.changes if c.change_type == ChangeType.UNIQUE_CHANGED]
         assert len(changes) == 1
@@ -218,14 +349,33 @@ class TestUniqueChanged:
 
 class TestForeignKeyChanged:
     def test_foreign_key_added_is_warning(self):
-        fk = [{"constrained_columns": ["customer_id"], "referred_table": "customers",
-               "referred_columns": ["id"]}]
-        expected = _make_db({"t": _make_table("t", columns={
-            "customer_id": _make_col("customer_id", foreign_key=[]),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "customer_id": _make_col("customer_id", foreign_key=fk),
-        })})
+        fk = [
+            {
+                "constrained_columns": ["customer_id"],
+                "referred_table": "customers",
+                "referred_columns": ["id"],
+            }
+        ]
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "customer_id": _make_col("customer_id", foreign_key=[]),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "customer_id": _make_col("customer_id", foreign_key=fk),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         fk_types = (ChangeType.FOREIGN_KEY_CHANGED, ChangeType.FOREIGN_KEY_ADDED)
         changes = [c for c in result.changes if c.change_type in fk_types]
@@ -233,16 +383,32 @@ class TestForeignKeyChanged:
         assert changes[0].severity == Severity.WARNING
 
     def test_foreign_key_changed_is_breaking(self):
-        fk_old = [{"constrained_columns": ["cid"], "referred_table": "a",
-                   "referred_columns": ["id"]}]
-        fk_new = [{"constrained_columns": ["cid"], "referred_table": "b",
-                   "referred_columns": ["id"]}]
-        expected = _make_db({"t": _make_table("t", columns={
-            "cid": _make_col("cid", foreign_key=fk_old),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "cid": _make_col("cid", foreign_key=fk_new),
-        })})
+        fk_old = [
+            {"constrained_columns": ["cid"], "referred_table": "a", "referred_columns": ["id"]}
+        ]
+        fk_new = [
+            {"constrained_columns": ["cid"], "referred_table": "b", "referred_columns": ["id"]}
+        ]
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "cid": _make_col("cid", foreign_key=fk_old),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "cid": _make_col("cid", foreign_key=fk_new),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         fk_types = (ChangeType.FOREIGN_KEY_CHANGED, ChangeType.FOREIGN_KEY_ADDED)
         changes = [c for c in result.changes if c.change_type in fk_types]
@@ -252,12 +418,26 @@ class TestForeignKeyChanged:
 
 class TestOrdinalPositionChanged:
     def test_ordinal_position_changed_is_warning(self):
-        expected = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", ordinal_position=2),
-        })})
-        current = _make_db({"t": _make_table("t", columns={
-            "col": _make_col("col", ordinal_position=5),
-        })})
+        expected = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", ordinal_position=2),
+                    },
+                )
+            }
+        )
+        current = _make_db(
+            {
+                "t": _make_table(
+                    "t",
+                    columns={
+                        "col": _make_col("col", ordinal_position=5),
+                    },
+                )
+            }
+        )
         result = comparator.compare(expected, current)
         changes = [
             c for c in result.changes if c.change_type == ChangeType.ORDINAL_POSITION_CHANGED
@@ -314,39 +494,45 @@ class TestFixtureFiles:
         # old_column (TEXT) e new_nullable_col (TEXT) têm tipos compatíveis,
         # então o comparador detecta uma possível renomeação em vez de remoção/adição separada.
         possible_rename = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.POSSIBLE_RENAME and c.column_name == "old_column"
         ]
         column_removed = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_REMOVED and c.column_name == "old_column"
         ]
         # Ou uma renomeação foi detectada OU a coluna foi classificada como removida
         assert len(possible_rename) >= 1 or len(column_removed) >= 1
         # required_col foi adicionada NOT NULL sem default: BREAKING
         col_added_breaking = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "required_col"
         ]
         assert len(col_added_breaking) == 1
         assert col_added_breaking[0].severity == Severity.BREAKING
         # required_with_default foi adicionada NOT NULL com default: WARNING
         col_added_warning = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "required_with_default"
         ]
         assert len(col_added_warning) == 1
         assert col_added_warning[0].severity == Severity.WARNING
         # name VARCHAR(100) -> VARCHAR(50): BREAKING
         name_type_change = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.TYPE_CHANGED and c.column_name == "name"
         ]
         assert len(name_type_change) == 1
         assert name_type_change[0].severity == Severity.BREAKING
         # email nullable alterado de True -> False: BREAKING
         email_nullable = [
-            c for c in result.changes
+            c
+            for c in result.changes
             if c.change_type == ChangeType.NULLABLE_CHANGED and c.column_name == "email"
         ]
         assert len(email_nullable) == 1

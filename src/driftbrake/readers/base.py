@@ -12,7 +12,7 @@ class SchemaReader(ABC):
     def read(self) -> DatabaseSchema:
         """
         Lê e retorna o schema do banco de dados.
-        
+
         DatabaseSchema: A representação completa do schema.
         SchemaConnectionError: Se a conexão com a fonte falhar.
         SchemaContractNotFoundError: Se a fonte do schema não for encontrada.

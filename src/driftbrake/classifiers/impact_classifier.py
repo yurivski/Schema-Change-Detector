@@ -59,9 +59,7 @@ class ImpactClassifier:
     def classify_unique_change(self, old_unique: bool, new_unique: bool) -> Severity:
         return Severity.WARNING
 
-    def classify_foreign_key_change(
-        self, old_fk: list, new_fk: list
-    ) -> Severity:
+    def classify_foreign_key_change(self, old_fk: list, new_fk: list) -> Severity:
         old_has = bool(old_fk)
         new_has = bool(new_fk)
         if not old_has and new_has:
@@ -70,14 +68,10 @@ class ImpactClassifier:
         # FK alterada ou removida
         return Severity.BREAKING
 
-    def classify_ordinal_position_change(
-        self, old_pos: int, new_pos: int
-    ) -> Severity:
+    def classify_ordinal_position_change(self, old_pos: int, new_pos: int) -> Severity:
         return Severity.WARNING
 
-    def classify_possible_rename(
-        self, removed_col: str, added_col: str
-    ) -> Severity:
+    def classify_possible_rename(self, removed_col: str, added_col: str) -> Severity:
         return Severity.WARNING
 
     def build_change(
