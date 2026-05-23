@@ -1,25 +1,40 @@
 <div align="center">
-
-# **DriftBrake** <br> Documentação
-
-Bancos de dados mudam. Uma coluna é removida, um tipo é alterado, uma tabela é renomeada. Se isso acontece sem controle, pipelines de dados quebram em silêncio, e você só descobre horas depois, com dados corrompidos ou processamento parado. O **DriftBrake** resolve isso com um conceito simples: você cria um "contrato" que descreve exatamente como seu banco deve ser. Antes de executar qualquer pipeline, a ferramenta compara o banco real com esse contrato e avisa (ou bloqueia) se algo mudou.
-
-**DriftBrake** é um projeto de pacote Python, que lê automaticamente o schema atual do banco de dados PostgreSQL, compara contra um contrato versionado (`schema.lock.json`), classifica mudanças por impacto e pode bloquear pipelines antes que eles quebrem em produção.
-
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="imagens/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" src="imagens/db_banner_white.svg" width="560">
+  </picture>
 </div>
 
+-----------------
 <br>
-
----
 
 <div align="center">
 
-**Atalho por categoria: clique no título sublinhado para expandir.**
+**DriftBrake reads the current PostgreSQL schema automatically, compares it against a versioned
+contract, classifies drifts by impact (BREAKING, WARNING, SAFE), and blocks pipelines
+when incompatible changes are detected, before they cause failures in production.**
+
+</div>
+
+> [!NOTE]
+> - Reads the PostgreSQL schema
+> - Compares it against a contract
+> - Classifies changes by impact
+> - Blocks pipelines on breaking changes
+> - Generates JSON, HTML, and Markdown reports
+
+<br>
+
+<div align="center">
+
+### Shortcut by category: click the underlined title to expand.
 
 </div>
 
 <details>
-<summary><b><code>INSTALAÇÃO</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>INSTALLATION</code></b> — <i>Click here to view</i></summary>
+
+#### #1
 
 <br>
 
@@ -27,20 +42,20 @@ Bancos de dados mudam. Uma coluna é removida, um tipo é alterado, uma tabela �
 pip install -e .
 ```
 
-Para instalar com dependências de desenvolvimento:
+To install with development dependencies:
 
 ```bash
 pip install -e ".[dev]"
 pre-commit install
 ```
 
-Verifique a instalação:
+Verify the installation:
 
 ```bash
 driftbrake --help
 ```
 
-Verifique a versão instalada:
+Check the installed version:
 
 ```bash
 driftbrake --version
@@ -56,29 +71,29 @@ DriftBrake 0.0.2
 <br>
 
 <details>
-<summary><b><code>Resumo por situação</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Quick reference by situation</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-| Situação | Comando |
+| Situation | Command |
 |---|---|
-| Primeira vez usando a ferramenta | `driftbrake init` |
-| Verificar se o banco mudou antes de rodar o pipeline | `driftbrake check` |
-| Comparar dois estados sem mexer no contrato | `driftbrake diff --old arquivo1.json --new arquivo2.json` |
-| Guardar o estado atual do banco como referência futura | `driftbrake snapshot --output snapshots/nome.json` |
-| Uma migration foi aplicada e as mudanças são intencionais | `driftbrake update-contract --yes` |
-| Ver o relatório de mudanças em HTML | `driftbrake check --html relatorio.html` |
+| Using the tool for the first time | `driftbrake init` |
+| Verify whether the database changed before running the pipeline | `driftbrake check` |
+| Compare two states without touching the contract | `driftbrake diff --old file1.json --new file2.json` |
+| Save the current database state as a future reference | `driftbrake snapshot --output snapshots/name.json` |
+| A migration was applied and the changes are intentional | `driftbrake update-contract --yes` |
+| View the change report in HTML | `driftbrake check --html report.html` |
 
 
-### Resumo dos comandos CLI
+### CLI commands at a glance
 
-| Comando | Descrição |
+| Command | Description |
 |---|---|
-| `driftbrake init` | Gera `schema.lock.json` a partir do banco atual |
-| `driftbrake check` | Compara o banco contra o contrato e retorna exit code |
-| `driftbrake diff` | Compara dois JSONs ou um JSON contra o banco |
-| `driftbrake snapshot` | Captura o schema atual sem comparar |
-| `driftbrake update-contract` | Atualiza o contrato para refletir o estado atual |
+| `driftbrake init` | Generate `schema.lock.json` from the current database |
+| `driftbrake check` | Compare the database against the contract and return an exit code |
+| `driftbrake diff` | Compare two JSON files or a JSON file against the database |
+| `driftbrake snapshot` | Capture the current schema without comparing |
+| `driftbrake update-contract` | Update the contract to reflect the current state |
 
 ---
 </details>
@@ -86,13 +101,13 @@ DriftBrake 0.0.2
 <br>
 
 <details>
-<summary><b><code>Config. do seu arquivo .env</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Configuring your .env file</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-As credenciais abaixo são exemplo de como devem estar no seu `.env`, são usadas automaticamente quando você não passa `--db-url`:
+The credentials below are an example of what your `.env` should contain. They are used automatically when you don't pass `--db-url`:
 
-| Variável | Valor |
+| Variable | Value |
 |---|---|
 | `DATABASE_URL` | `postgresql://user:pass@localhost:5432/mydb` |
 | `DB_HOST` | `localhost` |
@@ -101,9 +116,9 @@ As credenciais abaixo são exemplo de como devem estar no seu `.env`, são usada
 | `DB_USER` | `postgres` |
 | `DB_PASSWORD` | `secrets` |
 
-**Acesso ao banco de dados:** a ferramenta usa o SQLAlchemy por baixo dos panos. Quando você roda qualquer comando, ela monta a URL de conexão no formato `postgresql://usuario:senha@host:porta/banco` e usa o driver `psycopg2` para se conectar. O SQLAlchemy então usa o `Inspector`, uma API interna que consulta o catálogo do PostgreSQL (`information_schema` e `pg_catalog`) para ler metadados de tabelas, colunas, tipos, constraints e índices. Nenhuma linha dos seus dados é lida, apenas a estrutura.
+**Database access:** the tool uses SQLAlchemy under the hood. When you run any command, it assembles the connection URL in the format `postgresql://user:password@host:port/database` and uses the `psycopg2` driver to connect. SQLAlchemy then uses the `Inspector`, an internal API that queries the PostgreSQL catalog (`information_schema` and `pg_catalog`) to read metadata about tables, columns, types, constraints, and indexes. None of your row data is read — only the structure.
 
-**Prioridade da conexão:** se `DATABASE_URL` estiver definida no ambiente, ela tem prioridade total. Só se ela não existir, a ferramenta monta a URL juntando `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`.
+**Connection priority:** if `DATABASE_URL` is defined in the environment, it takes full precedence. Only when it doesn't exist does the tool build the URL from `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`.
 
 ---
 </details>
@@ -111,11 +126,11 @@ As credenciais abaixo são exemplo de como devem estar no seu `.env`, são usada
 <br>
 
 <details>
-<summary><b><code>Config. do arquivo YML</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Configuring the YML file</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-Crie um `driftbrake.yml` baseado no `driftbrake.example.yml`:
+Create a `driftbrake.yml` file based on `driftbrake.example.yml`:
 
 ```yaml
 fail_on:
@@ -133,7 +148,7 @@ columns:
       [...]
 ```
 
-Passe o arquivo para a CLI com `--config driftbrake.yml` ou para o `SchemaGuard` com `config_path="driftbrake.yml"`.
+Pass the file to the CLI with `--config driftbrake.yml`, or to `SchemaGuard` with `config_path="driftbrake.yml"`.
 
 ---
 </details>
@@ -142,26 +157,26 @@ Passe o arquivo para a CLI com `--config driftbrake.yml` ou para o `SchemaGuard`
 <br>
 
 <details>
-<summary><b><code>Conexão com o banco de dados</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Database connection</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-A ferramenta aceita a URL do banco de três formas, em ordem de prioridade:
+The tool accepts the database URL in three ways, in order of precedence:
 
-**1. Argumento direto na CLI:**
+**1. Direct CLI argument:**
 
 ```bash
 driftbrake check --db-url "postgresql://user:pass@localhost:5432/mydb"
 ```
 
-**2. Variável de ambiente `DATABASE_URL`:**
+**2. Environment variable `DATABASE_URL`:**
 
 ```bash
 export DATABASE_URL="postgresql://user:pass@localhost:5432/mydb"
 driftbrake check
 ```
 
-**3. Variáveis individuais no `.env` ou no ambiente:**
+**3. Individual variables in `.env` or environment:**
 
 ```
 DB_HOST=localhost
@@ -177,15 +192,15 @@ DB_PASSWORD=secret
 <br>
 
 <details>
-<summary><b><code>Comandos e exemplos de saídas</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Commands and example outputs</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-### 0. `--version` e `--info` — Verificar versão e ambiente
+### 0. `--version` and `--info` — Check version and environment
 
 #### `driftbrake --version`
 
-Exibe a versão instalada do DriftBrake e encerra.
+Displays the installed DriftBrake version and exits.
 
 ```bash
 driftbrake --version
@@ -199,7 +214,7 @@ DriftBrake 0.0.2
 
 #### `driftbrake --info`
 
-Exibe informações completas sobre o ambiente de execução e encerra. Útil para reportar problemas.
+Displays full information about the runtime environment and exits. Useful when reporting issues.
 
 ```bash
 driftbrake --info
@@ -216,15 +231,15 @@ SQLAlchemy 2.0.49
 
 ---
 
-### 1. `init` — Criar o contrato pela primeira vez
+### 1. `init` — Create the contract for the first time
 
-Conecta ao seu PostgreSQL, lê a estrutura completa do banco (tabelas, colunas, tipos, constraints, índices) e salva tudo em um arquivo JSON. Esse arquivo se torna o contrato, a "foto" do estado atual do banco.
+Connects to your PostgreSQL, reads the complete database structure (tables, columns, types, constraints, indexes), and saves everything to a JSON file. That file becomes the contract — a "snapshot" of the current database state.
 
-**Primeira execução:** sem o contrato, não há nada para comparar. O `init` é sempre o ponto de partida. Você roda uma vez, commita o arquivo no git, e a partir daí qualquer mudança no banco pode ser detectada. O `init` vem antes de tudo porque ele *cria* o ponto de referência. Não faz sentido rodar `check` antes de ter um contrato. Execução:
+**First run:** without a contract, there's nothing to compare against. `init` is always the starting point. You run it once, commit the file to git, and from then on any database change can be detected. `init` comes before everything because it *creates* the reference point. It makes no sense to run `check` without a contract.
 
 #### `driftbrake init`
 
-Conecta no banco, lê o schema atual e cria o contrato `schema.lock.json`. Esse arquivo deve ser versionado no Git.
+Connects to the database, reads the current schema, and creates the contract `schema.lock.json`. This file should be versioned in Git.
 
 ```bash
 driftbrake init \
@@ -235,32 +250,32 @@ driftbrake init \
 
 <br>
 
-**Opções:**
+**Options:**
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 |---|---|---|
-| `--db-url` | lê do `.env` | URL completa de conexão com o PostgreSQL |
-| `--schemas` | `public` | Quais schemas do PostgreSQL capturar. Separe por vírgula para mais de um |
-| `--output` | `schema.lock.json` | Nome e caminho do arquivo de contrato gerado |
+| `--db-url` | reads from `.env` | Full PostgreSQL connection URL |
+| `--schemas` | `public` | Which PostgreSQL schemas to capture. Separate with commas for multiple |
+| `--output` | `schema.lock.json` | Name and path of the generated contract file |
 
-**Exit codes:** `0` sucesso, `3` erro de conexão.
+**Exit codes:** `0` success, `3` connection error.
 
 <br>
 
 ```bash
-# Forma mais simples, usa as variáveis do .env automaticamente
+# Simplest form — uses .env variables automatically
 driftbrake init
 
-# Especificando o banco explicitamente
+# Explicitly specifying the database
 driftbrake init --db-url "postgresql://user:pass@localhost:5432/mydb"
 
-# Capturando schemas específicos (além do public)
+# Capturing specific schemas (besides public)
 driftbrake init --schemas "public,analytics,staging"
 
-# Salvando o contrato em outro caminho
-driftbrake init --output "contratos/schema_producao.lock.json"
+# Saving the contract to a different path
+driftbrake init --output "contracts/production_schema.lock.json"
 
-# Tudo junto
+# All together
 driftbrake init \
   --db-url "postgresql://user:pass@localhost:5432/mydb" \
   --schemas "public" \
@@ -269,7 +284,7 @@ driftbrake init \
 
 <br>
 
-**Exemplo de arquivo gerado:**
+**Example of the generated file:**
 ```json
 {
   "contract_version": "1.0",
@@ -296,47 +311,47 @@ driftbrake init \
 
 <br>
 
-**Saídas possíveis:**
+**Possible outputs:**
 ```
-Conectando ao banco de dados e lendo o schema (public)...
-[OK] Contrato de schema salvo em: schema.lock.json
-     12 tabela(s) capturada(s) em 1 schema(s).
+Connecting to the database and reading the schema (public)...
+[OK] Schema contract saved to: schema.lock.json
+     12 table(s) captured across 1 schema(s).
 ```
 
 <br>
 
-**Exemplo prático:**
+**Practical example:**
 
 ```bash
 driftbrake init --db-url "postgresql://postgres:secret@localhost:5432/mydb" --schemas public
 ```
 
 ```
-Conectando ao banco... OK
-Lendo schema: public
-  customers     (4 colunas)
-  orders        (6 colunas)
-  order_items   (5 colunas)
+Connecting to the database... OK
+Reading schema: public
+  customers     (4 columns)
+  orders        (6 columns)
+  order_items   (5 columns)
 
-Contrato gerado: schema.lock.json
+Contract generated: schema.lock.json
   Schemas:  1
-  Tabelas:  3
-  Colunas:  15
+  Tables:   3
+  Columns:  15
 ```
 
 <br>
 
-### 2. `check` — Verificar se o banco mudou
+### 2. `check` — Verify whether the database has changed
 
-Lê o banco de dados atual e compara com o contrato existente (`schema.lock.json`). Lista todas as diferenças encontradas, classifica cada uma por severidade e retorna um código de saída que pode ser usado em pipelines de CI/CD.
+Reads the current database and compares it to the existing contract (`schema.lock.json`). Lists every difference found, classifies each by severity, and returns an exit code suitable for CI/CD pipelines.
 
-**Comando de rotina:** o `check` é o coração da ferramenta. Você roda antes de qualquer pipeline, migration ou deploy. Se ele retornar código 0, está tudo bem. Se retornar código 2, algo crítico mudou e o pipeline deve ser bloqueado.
+**Routine command:** `check` is the heart of the tool. You run it before any pipeline, migration, or deploy. If it returns exit code 0, you're good. If it returns 2, something critical has changed and the pipeline should be blocked.
 
-**Comparar contrato → banco (e não banco → banco):** o contrato representa o estado *acordado* do banco. Ao comparar contra ele, você detecta desvios do que foi planejado, independente de quando ou como a mudança aconteceu. Execução:
+**Compare contract → database (not database → database):** the contract represents the *agreed-upon* state of the database. Comparing against it lets you detect deviations from what was planned, regardless of when or how the change happened.
 
 #### `driftbrake check`
 
-Compara o banco atual contra o contrato. É o comando central para uso em CI/CD.
+Compares the current database against the contract. This is the central command for use in CI/CD.
 
 ```bash
 driftbrake check \
@@ -350,99 +365,99 @@ driftbrake check \
 
 <br>
 
-**Opções:**
+**Options:**
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 |---|---|---|
-| `--db-url` | lê do `.env` | URL de conexão com o PostgreSQL |
-| `--contract` | `schema.lock.json` | Caminho do arquivo de contrato para comparar |
-| `--fail-on` | `BREAKING` | Níveis que causam saída com código 2. Use `BREAKING,WARNING` para ser mais restritivo |
-| `--json` | — | Caminho para salvar um relatório em JSON |
-| `--html` | — | Caminho para salvar um relatório em HTML (visual, com tabelas coloridas) |
-| `--markdown` | — | Caminho para salvar um relatório em Markdown |
-| `--config` | — | Arquivo `.yml` com configurações adicionais (exclusões de tabelas, etc.) |
+| `--db-url` | reads from `.env` | PostgreSQL connection URL |
+| `--contract` | `schema.lock.json` | Path to the contract file to compare against |
+| `--fail-on` | `BREAKING` | Levels that trigger exit code 2. Use `BREAKING,WARNING` to be stricter |
+| `--json` | — | Path to save a JSON report |
+| `--html` | — | Path to save an HTML report (visual, with colored tables) |
+| `--markdown` | — | Path to save a Markdown report |
+| `--config` | — | YAML file with additional settings (table exclusions, etc.) |
 
-**Exit codes:** `0` compatível, `2` breaking change, `3` erro de conexão, `4` contrato ausente, `5` erro de configuração, `6` erro interno.
+**Exit codes:** `0` compatible, `2` breaking change, `3` connection error, `4` contract missing, `5` configuration error, `6` internal error.
 
 <br>
 
 ```bash
-# Forma mais simples, usa schema.lock.json no diretório atual e variáveis do .env
+# Simplest form — uses schema.lock.json in the current directory and .env variables
 driftbrake check
 
-# Especificando tudo
+# Specifying everything
 driftbrake check \
   --db-url "postgresql://user:pass@localhost:5432/mydb" \
   --contract "schema.lock.json"
 
-# Falhar também em warnings (mais restritivo)
+# Fail on warnings too (stricter)
 driftbrake check --fail-on "BREAKING,WARNING"
 
-# Gerar relatórios além da saída no terminal
+# Generate reports alongside terminal output
 driftbrake check \
-  --json "relatorios/diff.json" \
-  --html "relatorios/diff.html" \
-  --markdown "relatorios/diff.md"
+  --json "reports/diff.json" \
+  --html "reports/diff.html" \
+  --markdown "reports/diff.md"
 
-# Usando um arquivo de configuração (yml)
+# Using a configuration file (yml)
 driftbrake check --config "driftbrake.yml"
 
-# Comando completo para uso em CI
+# Full command for CI use
 driftbrake check \
   --db-url "postgresql://user:pass@localhost:5432/mydb" \
   --contract "schema.lock.json" \
   --fail-on "BREAKING" \
-  --html "relatorios/diff.html"
+  --html "reports/diff.html"
 ```
 
-**Códigos de saída:**
+**Exit codes:**
 
-| Código | Situação |
+| Code | Situation |
 |---|---|
-| `0` | Schema compatível — nenhuma mudança nos níveis configurados |
-| `2` | Mudança detectada acima do limiar definido em `--fail-on` |
-| `3` | Não foi possível conectar ao banco |
-| `4` | Arquivo de contrato não encontrado ou inválido |
-| `5` | Erro de configuração (ex: arquivo `.yml` inválido) |
-| `6` | Erro interno inesperado |
+| `0` | Schema compatible — no changes at the configured levels |
+| `2` | Change detected above the threshold defined in `--fail-on` |
+| `3` | Could not connect to the database |
+| `4` | Contract file missing or invalid |
+| `5` | Configuration error (e.g. invalid YAML file) |
+| `6` | Unexpected internal error |
 
 <br>
 
-**Usando em um script de pipeline:**
+**Using in a pipeline script:**
 ```bash
 driftbrake check
 if [ $? -ne 0 ]; then
-  echo "Schema mudou — pipeline bloqueado."
+  echo "Schema changed — pipeline blocked."
   exit 1
 fi
-# continua com o pipeline...
+# continue with the pipeline...
 ```
 
 <br>
 
-**Exemplo prático (schema compatível):**
+**Practical example (compatible schema):**
 
 ```bash
 driftbrake check --db-url "$DATABASE_URL" --contract schema.lock.json
 ```
 
 ```
-Conectando ao banco... OK
-Comparando contra schema.lock.json...
+Connecting to the database... OK
+Comparing against schema.lock.json...
 
 DRIFTBRAKE CHECK PASSED
 
-Resumo:
+Summary:
   BREAKING: 0
   WARNING:  0
   SAFE:     0
 
-Nenhuma mudança detectada. Pipeline liberado.
+No changes detected. Pipeline cleared.
 ```
 
 <br>
 
-**Exemplo prático (breaking change detectado):**
+**Practical example (breaking change detected):**
 
 ```bash
 driftbrake check \
@@ -454,35 +469,35 @@ driftbrake check \
 ```
 
 ```
-Conectando ao banco... OK
-Comparando contra schema.lock.json...
+Connecting to the database... OK
+Comparing against schema.lock.json...
 
 DRIFTBRAKE CHECK FAILED
 
-Resumo:
+Summary:
   BREAKING: 2
   WARNING:  1
   SAFE:     1
 
 BREAKING
-  public.customers    email              coluna removida
-  public.orders       total_amount       tipo mudou: numeric → text
+  public.customers    email              column removed
+  public.orders       total_amount       type changed: numeric → text
 
 WARNING
-  public.orders       customer_id        foreign key adicionada
+  public.orders       customer_id        foreign key added
 
 SAFE
-  public.customers    created_at         coluna nullable adicionada
+  public.customers    created_at         nullable column added
 
 JSON:  schema_diff.json
 HTML:  schema_report.html
 
-Pipeline bloqueado. (exit code 2)
+Pipeline blocked. (exit code 2)
 ```
 
 <br>
 
-**Exemplo prático (apenas warnings (pipeline continua)):**
+**Practical example (warnings only — pipeline continues):**
 
 ```bash
 driftbrake check --contract schema.lock.json --fail-on BREAKING
@@ -490,43 +505,43 @@ echo "Exit code: $?"
 ```
 
 ```
-Conectando ao banco... OK
-Comparando contra schema.lock.json...
+Connecting to the database... OK
+Comparing against schema.lock.json...
 
 DRIFTBRAKE CHECK WARNING
 
-Resumo:
+Summary:
   BREAKING: 0
   WARNING:  2
   SAFE:     1
 
 WARNING
-  public.orders       status             default alterado: 'pending' → 'draft'
-  public.customers    updated_at         NOT NULL removido
+  public.orders       status             default changed: 'pending' → 'draft'
+  public.customers    updated_at         NOT NULL removed
 
 SAFE
-  public.products     description        coluna nullable adicionada
+  public.products     description        nullable column added
 
-Pipeline liberado com avisos. (exit code 0)
+Pipeline cleared with warnings. (exit code 0)
 
 Exit code: 0
 ```
 
 <br>
 
-### 3. `diff` — Comparar duas versões de schema sem usar o contrato
+### 3. `diff` — Compare two schema versions without using the contract
 
-Compara duas fontes de schema livremente, dois arquivos JSON, ou um arquivo JSON contra um banco ao vivo. Não usa nem modifica o `schema.lock.json`. É uma comparação pontual, exploratória.
+Freely compares two schema sources: two JSON files, or a JSON file against a live database. It neither uses nor modifies `schema.lock.json`. It's an ad-hoc, exploratory comparison.
 
-**Separado do `check`:** o `check` tem uma função específica, validar o banco contra o contrato oficial. O `diff` é mais flexível: você pode comparar um snapshot de ontem com o banco de hoje, ou dois arquivos de ambientes diferentes (produção e homologação), sem comprometer o contrato.
+**Distinct from `check`:** `check` has a specific role — validate the database against the official contract. `diff` is more flexible: you can compare yesterday's snapshot to today's database, or two files from different environments (production and staging) without affecting the contract.
 
-**`--old` representa o "esperado" e `--new` o "atual":** a ferramenta sempre pensa em termos de "o que eu esperava" versus "o que encontrei". O arquivo `--old` é tratado como a referência (o que deveria ser) e `--new`/`--new-db` como o estado atual. Execução:
+**`--old` represents the "expected" and `--new` the "current":** the tool always thinks in terms of "what I expected" versus "what I found." The `--old` file is treated as the reference (what it should be) and `--new`/`--new-db` as the current state.
 
 #### `driftbrake diff`
 
-Compara dois schemas sem precisar de um contrato. Útil para comparar dois snapshots históricos ou um arquivo contra o banco atual.
+Compares two schemas without needing a contract. Useful for comparing two historical snapshots, or a file against the current database.
 
-**Arquivo vs arquivo:**
+**File vs file:**
 
 ```bash
 driftbrake diff \
@@ -537,7 +552,7 @@ driftbrake diff \
 
 <br>
 
-**Arquivo vs banco ao vivo:**
+**File vs live database:**
 
 ```bash
 driftbrake diff \
@@ -548,136 +563,136 @@ driftbrake diff \
 
 <br>
 
-**Opções:**
+**Options:**
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 |---|---|---|
-| `--old` | obrigatório | Caminho para o arquivo JSON que representa o estado "esperado" / "antes" |
-| `--new` | — | Caminho para o arquivo JSON que representa o estado "atual" / "depois" |
-| `--new-db` | — | URL do banco de dados a ser usado como estado "atual" (alternativa ao `--new`) |
-| `--json` | — | Caminho para salvar o relatório em JSON |
-| `--html` | — | Caminho para salvar o relatório em HTML |
+| `--old` | required | Path to the JSON file representing the "expected" / "before" state |
+| `--new` | — | Path to the JSON file representing the "current" / "after" state |
+| `--new-db` | — | Database URL to use as the "current" state (alternative to `--new`) |
+| `--json` | — | Path to save the JSON report |
+| `--html` | — | Path to save the HTML report |
 
 <br>
 
 ```bash
-# Comparar dois arquivos JSON (ex: snapshot de ontem vs. snapshot de hoje)
+# Compare two JSON files (e.g. yesterday's snapshot vs today's)
 driftbrake diff \
-  --old "snapshots/schema_ontem.json" \
-  --new "snapshots/schema_hoje.json"
+  --old "snapshots/schema_yesterday.json" \
+  --new "snapshots/schema_today.json"
 
-# Comparar um arquivo JSON contra o banco ao vivo
+# Compare a JSON file against the live database
 driftbrake diff \
   --old "schema.lock.json" \
   --new-db "postgresql://user:pass@localhost:5432/mydb"
 
-# Comparar e gerar relatórios
+# Compare and generate reports
 driftbrake diff \
-  --old "schema_homolog.json" \
+  --old "schema_staging.json" \
   --new-db "postgresql://user:pass@localhost:5432/mydb" \
-  --json "diff_resultado.json" \
-  --html "diff_resultado.html"
+  --json "diff_result.json" \
+  --html "diff_result.html"
 ```
 
 > [!CAUTION]
-> Você deve informar `--new` **ou** `--new-db`, nunca os dois ao mesmo tempo. Se nenhum for informado, a ferramenta retorna erro.
+> You must pass either `--new` **or** `--new-db`, never both at the same time. If neither is passed, the tool returns an error.
 
 <br>
 
-**Exemplo prático (dois arquivos):**
+**Practical example (two files):**
 
 ```bash
 driftbrake diff --old schema_before.json --new schema_after.json
 ```
 
 ```
-Comparando schema_before.json → schema_after.json...
+Comparing schema_before.json → schema_after.json...
 
-Resumo:
+Summary:
   BREAKING: 1
   WARNING:  2
   SAFE:     0
 
 BREAKING
-  public.payments     amount             tipo mudou: numeric(10,2) → text
+  public.payments     amount             type changed: numeric(10,2) → text
 
 WARNING
-  public.payments     method             coluna adicionada (NOT NULL com default)
-  public.orders       status             default alterado: NULL → 'open'
+  public.payments     method             column added (NOT NULL with default)
+  public.orders       status             default changed: NULL → 'open'
 ```
 
 <br>
 
-**Exemplo prático (arquivo e banco:)**
+**Practical example (file and database):**
 
 ```bash
 driftbrake diff --old schema.lock.json --new-db "$DATABASE_URL" --html diff_report.html
 ```
 
 ```
-Lendo schema.lock.json...
-Conectando ao banco... OK
-Comparando...
+Reading schema.lock.json...
+Connecting to the database... OK
+Comparing...
 
-Resumo:
+Summary:
   BREAKING: 0
   WARNING:  1
   SAFE:     2
 
 WARNING
-  public.customers    phone              NOT NULL removido
+  public.customers    phone              NOT NULL removed
 
 SAFE
-  public.products     tags               coluna nullable adicionada
-  public.products     sku                coluna nullable adicionada
+  public.products     tags               nullable column added
+  public.products     sku                nullable column added
 
 HTML: diff_report.html
 ```
 
 <br>
 
-### 4. `snapshot` — Tirar uma foto do banco sem criar contrato
+### 4. `snapshot` — Capture a snapshot of the database without creating a contract
 
-Conecta ao banco, lê o schema e salva em um arquivo JSON, igual ao `init`, mas com um nome de arquivo diferente por padrão (`schema.snapshot.json`) e sem a intenção de ser o contrato oficial.
+Connects to the database, reads the schema, and saves it to a JSON file — just like `init`, but with a different default filename (`schema.snapshot.json`) and without the intent of being the official contract.
 
-**Função:** o `init` cria o contrato oficial do projeto. O `snapshot` serve para guardar estados intermediários, "como estava o banco na sexta-feira antes da migration", "estado do banco em homologação", "versão antes do deploy". Esses arquivos podem ser usados depois como `--old` no `diff` para investigar o que mudou.
+**Purpose:** `init` creates the official contract of the project. `snapshot` is for keeping intermediate states — "how the database looked Friday before the migration," "state of the staging database," "version before the deploy." These files can later be used as `--old` in `diff` to investigate what changed.
 
-**Por exemplo:** o `init` é o contrato oficial de comparação entre o estado atual do banco de dados. O `snapshot` é um registro, como um "backup" do momento em que você o executa, ele não é usado como comparação, apenas guarda como registro, cópia ou backup, etc. Execução:
+**In other words:** `init` is the official contract for comparing against the current database state. `snapshot` is a record — like a "backup" of the moment you ran it. It isn't used as a comparison reference; it just stores a copy, like a record or backup.
 
 #### `driftbrake snapshot`
 
-Captura o schema atual do banco como um arquivo JSON sem comparar nada. Útil para auditoria e histórico.
+Captures the current database schema as a JSON file without comparing anything. Useful for auditing and history.
 
 ```bash
 driftbrake snapshot \
   --db-url "$DATABASE_URL" \
-  --output historico/schema_2026-05-19.json \
+  --output history/schema_2026-05-19.json \
   --schemas public
 ```
 
 <br>
 
-**Opções:**
+**Options:**
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 |---|---|---|
-| `--db-url` | lê do `.env` | URL de conexão com o PostgreSQL |
-| `--output` | `schema.snapshot.json` | Caminho do arquivo de snapshot gerado |
-| `--schemas` | `public` | Schemas do PostgreSQL a capturar |
+| `--db-url` | reads from `.env` | PostgreSQL connection URL |
+| `--output` | `schema.snapshot.json` | Path of the generated snapshot file |
+| `--schemas` | `public` | PostgreSQL schemas to capture |
 
 <br>
 
 ```bash
-# Snapshot básico do banco atual
+# Basic snapshot of the current database
 driftbrake snapshot
 
-# Salvando com nome descritivo
-driftbrake snapshot --output "snapshots/antes_migration_2026_05_19.json"
+# Saving with a descriptive name
+driftbrake snapshot --output "snapshots/before_migration_2026_05_19.json"
 
-# Snapshot de schemas específicos
+# Snapshot of specific schemas
 driftbrake snapshot --schemas "public,analytics"
 
-# Snapshot completo com credenciais explícitas
+# Full snapshot with explicit credentials
 driftbrake snapshot \
   --db-url "postgresql://user:pass@localhost:5432/mydb" \
   --schemas "public" \
@@ -685,51 +700,51 @@ driftbrake snapshot \
 ```
 
 > [!NOTE]
-> ***Dica de uso:** criar um snapshot antes de cada migration é uma boa prática. Se algo der errado, você consegue fazer um `diff` para entender exatamente o que mudou.*
+> ***Usage tip:** creating a snapshot before every migration is good practice. If anything goes wrong, you can run a `diff` to see exactly what changed.*
 
 <br>
 
-**Exemplo prático:**
+**Practical example:**
 
 ```bash
 driftbrake snapshot \
   --db-url "$DATABASE_URL" \
-  --output historico/schema_2026-05-19.json \
+  --output history/schema_2026-05-19.json \
   --schemas public,raw
 ```
 
 ```
-Conectando ao banco... OK
-Lendo schemas: public, raw
+Connecting to the database... OK
+Reading schemas: public, raw
 
   public
-    customers     (4 colunas)
-    orders        (6 colunas)
-    order_items   (5 colunas)
+    customers     (4 columns)
+    orders        (6 columns)
+    order_items   (5 columns)
 
   raw
-    raw_events    (8 colunas)
-    raw_sessions  (5 colunas)
+    raw_events    (8 columns)
+    raw_sessions  (5 columns)
 
-Snapshot salvo: historico/schema_2026-05-19.json
+Snapshot saved: history/schema_2026-05-19.json
   Schemas:  2
-  Tabelas:  5
-  Colunas:  28
+  Tables:   5
+  Columns:  28
 ```
 
 <br>
 
-### 5. `update-contract` — Aceitar as mudanças e atualizar o contrato
+### 5. `update-contract` — Accept the changes and update the contract
 
-Reconecta ao banco, lê o schema atual e sobrescreve o `schema.lock.json` com esse novo estado. Em outras palavras: "estou ciente das mudanças, elas são intencionais, e quero que passem a ser o novo contrato". Quando uma mudança é planejada e aprovada, uma migration legítima, uma refatoração de schema deliberada, o contrato precisa ser atualizado para refletir o novo estado. Sem esse comando, o `check` continuaria reportando as mudanças para sempre como se fossem problemas.
+Reconnects to the database, reads the current schema, and overwrites `schema.lock.json` with this new state. In other words: "I'm aware of the changes, they are intentional, and I want them to become the new contract." When a change is planned and approved — a legitimate migration, a deliberate schema refactor — the contract needs to be updated to reflect the new state. Without this command, `check` would keep reporting the changes forever as if they were problems.
 
-**Confirmação interativa:** sobrescrever o contrato é uma ação irreversível sem o git. A confirmação existe como proteção contra execuções acidentais.
+**Interactive confirmation:** overwriting the contract is irreversible without git. The confirmation exists as protection against accidental runs.
 
-**Comando `--yes`:** em ambientes de CI/CD não há terminal interativo. O `--yes` (ou `-y`) pula a confirmação para que o comando possa rodar em scripts automatizados após aprovação humana no processo de review. Execução:
+**`--yes` flag:** in CI/CD environments there is no interactive terminal. `--yes` (or `-y`) skips the confirmation so the command can run in automated scripts after human approval in the review process.
 
 #### `driftbrake update-contract`
 
-Atualiza o `schema.lock.json` para refletir o estado atual do banco. Use após aprovar e aplicar uma mudança de schema intencional.
+Updates `schema.lock.json` to reflect the current database state. Use after approving and applying an intentional schema change.
 
 ```bash
 driftbrake update-contract \
@@ -740,34 +755,34 @@ driftbrake update-contract \
 
 <br>
 
-**Opções:**
+**Options:**
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 |---|---|---|
-| `--db-url` | lê do `.env` | URL de conexão com o PostgreSQL |
-| `--contract` | `schema.lock.json` | Caminho do contrato a ser sobrescrito |
-| `--yes` / `-y` | `false` | Pula a pergunta de confirmação |
-| `--schemas` | `public` | Schemas a capturar para o novo contrato |
+| `--db-url` | reads from `.env` | PostgreSQL connection URL |
+| `--contract` | `schema.lock.json` | Path to the contract to overwrite |
+| `--yes` / `-y` | `false` | Skips the confirmation prompt |
+| `--schemas` | `public` | Schemas to capture for the new contract |
 
 > [!WARNING]
-> **Atenção:** sem `--yes`, o comando pede confirmação explícita antes de sobrescrever o contrato.
+> **Warning:** without `--yes`, the command asks for explicit confirmation before overwriting the contract.
 
 <br>
 
 ```bash
-# Atualizar o contrato com confirmação interativa
+# Update the contract with interactive confirmation
 driftbrake update-contract
 
-# Atualizar sem confirmação (para uso em scripts/CI após aprovação)
+# Update without confirmation (for scripts/CI after approval)
 driftbrake update-contract --yes
 
-# Especificando um contrato em outro caminho
-driftbrake update-contract --contract "contratos/producao.lock.json"
+# Specifying a contract at a different path
+driftbrake update-contract --contract "contracts/production.lock.json"
 
-# Atualizar schemas específicos
+# Update specific schemas
 driftbrake update-contract --schemas "public,analytics"
 
-# Comando completo
+# Full command
 driftbrake update-contract \
   --db-url "postgresql://user:pass@localhost:5432/mydb" \
   --contract "schema.lock.json" \
@@ -777,16 +792,16 @@ driftbrake update-contract \
 
 <br>
 
-**Exemplo prático (modo não interativo (CI/CD):)**
+**Practical example (non-interactive mode (CI/CD)):**
 
 ```bash
 driftbrake update-contract --db-url "$DATABASE_URL" --contract schema.lock.json --yes
 ```
 
 ```
-Conectando ao banco... OK
-Lendo schema atual...
-Contrato atualizado: schema.lock.json
+Connecting to the database... OK
+Reading current schema...
+Contract updated: schema.lock.json
 ```
 
 ---
@@ -795,17 +810,17 @@ Contrato atualizado: schema.lock.json
 <br>
 
 <details>
-<summary><b><code>Atalho de Desenvolvimento</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Development shortcuts</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-O repositório possui o arquivo `Makefile` com comandos de atalho:
+The repository ships with a `Makefile` for common tasks:
 
 ```bash
 pip install -e ".[dev]"
-make test       # roda todos os testes
-make lint       # verifica estilo
-make check      # lint + typecheck + testes
+make test       # run all tests
+make lint       # check style
+make check      # lint + typecheck + tests
 ```
 
 ---
@@ -814,22 +829,22 @@ make check      # lint + typecheck + testes
 <br>
 
 <details>
-<summary><b><code>Exit Codes</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Exit Codes</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-| Código | Significado |
+| Code | Meaning |
 |---|---|
-| `0` | Sucesso — schema compatível ou operação concluída |
-| `1` | Aviso em modo estrito (reservado) |
-| `2` | Mudança crítica detectada — pipeline deve ser bloqueado |
-| `3` | Erro de conexão com o banco de dados |
-| `4` | Contrato ausente ou inválido |
-| `5` | Erro de configuração |
-| `6` | Erro interno inesperado |
+| `0` | Success — schema compatible or operation completed |
+| `1` | Warning in strict mode (reserved) |
+| `2` | Critical change detected — pipeline should be blocked |
+| `3` | Database connection error |
+| `4` | Contract missing or invalid |
+| `5` | Configuration error |
+| `6` | Unexpected internal error |
 
 > [!NOTE]
-> CI/CD pode decidir sucesso ou falha exclusivamente pelo exit code.
+> CI/CD can decide success or failure based exclusively on the exit code.
 
 ---
 </details>
@@ -837,11 +852,11 @@ make check      # lint + typecheck + testes
 <br>
 
 <details>
-<summary><b><code>Formato do contrato</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Contract format</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
-O contrato é gerado pelo comando `init` e deve ser versionado no Git. Representa o schema que o pipeline espera encontrar.
+The contract is generated by `init` and should be versioned in Git. It represents the schema the pipeline expects to find.
 
 ```json
 {
@@ -887,7 +902,7 @@ O contrato é gerado pelo comando `init` e deve ser versionado no Git. Represent
 <br>
 
 <details>
-<summary><b><code>Formato dos relatórios gerados: JSON, HTML e Markdown</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Report formats: JSON, HTML, and Markdown</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
@@ -916,11 +931,11 @@ O contrato é gerado pelo comando `init` e deve ser versionado no Git. Represent
 
 ### HTML (`--html schema_report.html`)
 
-Relatório visual com resumo geral, inspirado no modelo do ydata-profiling (antigo *Pandas Profiling*). Usa os templates em `templates/`.
+A visual report with a general summary, inspired by ydata-profiling (formerly *Pandas Profiling*). Uses the templates in `templates/`.
 
 ### Markdown (`--markdown schema_report.md`)
 
-Relatório em formato Markdown, para comentários automáticos em pull requests.
+A Markdown-formatted report, suitable for automatic comments on pull requests.
 
 ---
 </details>
@@ -928,119 +943,80 @@ Relatório em formato Markdown, para comentários automáticos em pull requests.
 <br>
 
 <details>
-<summary><b><code>Arquivos do projeto</code></b> — <i>Clique aqui para visualizar</i></summary>
+<summary><b><code>Project files</code></b> — <i>Click here to view</i></summary>
 
 <br>
 
 ```
 DriftBrake/
 ├── src/driftbrake/
-│   ├── cli.py                        Comandos Typer (driftbrake)
-│   ├── guard.py                      SchemaGuard (API de alto nível)
+│   ├── cli.py                        Typer commands (driftbrake)
+│   ├── guard.py                      SchemaGuard (high-level API)
 │   ├── models.py                     Dataclasses: ColumnSchema, TableSchema, DiffResult...
-│   ├── exceptions.py                 Hierarquia de exceções
+│   ├── exceptions.py                 Exception hierarchy
 │   ├── readers/
-│   │   ├── base.py                   Classe abstrata SchemaReader
+│   │   ├── base.py                   Abstract SchemaReader class
 │   │   ├── postgres.py               PostgresSchemaReader (SQLAlchemy Inspector)
 │   │   └── json_reader.py            JsonSchemaReader (schema.lock.json)
 │   ├── comparators/
-│   │   └── schema_comparator.py      SchemaComparator (detecta diferenças)
+│   │   └── schema_comparator.py      SchemaComparator (detects differences)
 │   ├── classifiers/
-│   │   ├── impact_classifier.py      ImpactClassifier (atribui severidade)
-│   │   └── type_compatibility.py     Matriz de compatibilidade de tipos
+│   │   ├── impact_classifier.py      ImpactClassifier (assigns severity)
+│   │   └── type_compatibility.py     Type compatibility matrix
 │   ├── reporters/
-│   │   ├── terminal.py               Saída Rich no terminal
-│   │   ├── json_report.py            Relatório JSON estável
-│   │   ├── html_report.py            Relatório HTML (usa templates/)
-│   │   └── markdown_report.py        Relatório Markdown
+│   │   ├── terminal.py               Rich terminal output
+│   │   ├── json_report.py            Stable JSON report
+│   │   ├── html_report.py            HTML report (uses templates/)
+│   │   └── markdown_report.py        Markdown report
 │   ├── contracts/
-│   │   ├── loader.py                 Carrega e valida schema.lock.json
-│   │   └── writer.py                 Gera schema.lock.json
+│   │   ├── loader.py                 Loads and validates schema.lock.json
+│   │   └── writer.py                 Generates schema.lock.json
 │   └── config/
-│       └── settings.py               Loader do driftbrake.yml
-├── tests/                            57 testes unitários
-├── examples/                         Pipeline Python, Airflow, dbt, GitHub Actions
-├── templates/                        Templates HTML dos relatórios
+│       └── settings.py               driftbrake.yml loader
+├── tests/                            57 unit tests
+├── examples/                         Python pipeline, Airflow, dbt, GitHub Actions
+├── templates/                        HTML report templates
 ├── pyproject.toml
 ├── Makefile
 ├── driftbrake.example.yml
-├── README.md                         Introdução à ferramenta
-├── DOCUMENTATION.md                  Documentação
-└── CHANGELOG.md                      Histórico de versões
+├── README.md                         Introduction to the tool
+├── DOCUMENTATION.md                  Documentation
+└── CHANGELOG.md                      Version history
 ```
 
 </details>
 
 ---
-<br>
-
-## A ferramenta
-
-DriftBrake não é uma ferramenta de migration. Ele não aplica mudanças no banco, não gera scripts SQL e não gerencia versões de schema.
-
-O DriftBrake atua **antes** da execução de pipelines, verificando se o banco real ainda respeita o contrato esperado pelos consumidores de dados. Ele detecta desvios, classifica o impacto e bloqueia execuções quando necessário, mas nunca altera o banco.
-
-**Resumo:**
-
-- Lê o schema do PostgreSQL
-- Compara contra um contrato
-- Classifica mudanças por impacto
-- Bloqueia pipelines com breaking changes
-- Gera relatórios JSON, HTML e Markdown
 
 <br>
 
-## Exemplo de Fluxo de trabalho
+<div align="center">
 
-O `schema.lock.json` (contrato) vai ser gerado automaticamente quando você rodar o comando `init`.
+## Table of Contents
 
-```
-banco de dados real
-       │
-       ▼
-  [1] init          ← tira a "foto" do banco e salva como contrato
-       │
-       ▼
- schema.lock.json   ← esse arquivo é o contrato (contrato versionado no Git).
-       │
-       │    (o banco pode mudar ao longo do tempo)
-       │
-       ▼
-  [2] check         ← compara o banco atual contra o contrato
-       │
-       ├── tudo igual → pipeline pode rodar
-       └── mudança detectada → alerta ou bloqueio
-```
+</div>
 
-Quando uma mudança é deliberada e aprovada, você usa `update-contract` para atualizar o contrato. Quando quer comparar dois estados sem tocar no contrato, usa `diff` ou `snapshot`.
+||||||
+|-|-|-|-|-|
+|**DESCRIPTION**|**LINK**|-|**DESCRIPTION**|**LINK**|
+|**Create initial contract**|[Click Here](#initial-usage-example)|-|**Flow after migration**|[Click Here](#typical-flow-after-a-migration)|
+|**Import as a library**|[Click Here](#python-library)|-|**Direct connection via `.env`**|[Click Here](#usage-without---db-url-via-env)|
+|**SchemaGuard class**|[Click Here](#manual-construction-with-schemaguard)|-|**Drift classification**|[Click Here](#drifts-classification)|
+|**SchemaComparator class**|[Click Here](#using-schemacomparator-directly)|-|**Stack**|[Click Here](#stack)|
+|**Workflow**|[Click Here](#how-it-works)|-|**License**|[Click Here](#license)|
+|**Confidence level**|[Click Here](#possible_rename-confidence)|-|**Author**|[Click Here](#author)|
 
 <br>
 
-## Glossário de termos
+## Initial usage example
 
-**Contrato (`schema.lock.json`):** o arquivo JSON que descreve como o banco *deve* ser. Funciona como um "lock file" (daí o nome), assim como `package-lock.json` trava as versões de pacotes, esse arquivo trava a estrutura do banco.
-
-**BREAKING:** mudança que quebra consumidores existentes. Exemplos: remover uma coluna, mudar o tipo de `INTEGER` para `VARCHAR`, adicionar uma coluna `NOT NULL` sem valor padrão.
-
-**WARNING:** mudança que merece atenção mas não necessariamente quebra nada agora. Exemplos: adicionar uma coluna `NOT NULL` com valor padrão, alterar um valor padrão.
-
-**SAFE:** mudança sem impacto nos consumidores existentes. Exemplos: adicionar uma coluna nullable, criar uma nova tabela.
-
-**Diff:** a diferença encontrada entre o contrato (o que era esperado) e o banco real (o que existe agora).
-
-> [!NOTE]
-> ***Contrato esperado & banco atual:** o comparador sempre trata o contrato como a "verdade combinada" e o banco como o "estado real". Se algo existe no banco mas não no contrato, é uma adição. Se existe no contrato mas sumiu do banco, é uma remoção.*
-
-
-## Exemplo de uso inicial
-
-**Criar o contrato inicial:**
+**Create the initial contract:**
 
 ```bash
 driftbrake init --db-url "$DATABASE_URL" --output schema.lock.json
 ```
 
-**Verificar antes do pipeline:**
+**Verify before the pipeline runs:**
 
 ```bash
 driftbrake check \
@@ -1051,7 +1027,7 @@ driftbrake check \
   --html schema_report.html
 ```
 
-**Atualizar o contrato após aprovar mudanças:**
+**Update the contract after approving changes:**
 
 ```bash
 driftbrake update-contract --db-url "$DATABASE_URL" --contract schema.lock.json
@@ -1059,15 +1035,15 @@ driftbrake update-contract --db-url "$DATABASE_URL" --contract schema.lock.json
 
 <br>
 
-## Biblioteca Python
+## Python library
 
-### Integração simples em um pipeline
+### Simple pipeline integration
 
 ```python
 from driftbrake import SchemaGuard
 
 def run_pipeline():
-    print("Executando ETL...")
+    print("Running ETL...")
 
 def main():
     SchemaGuard.from_env(
@@ -1082,11 +1058,11 @@ if __name__ == "__main__":
 ```
 
 > [!NOTE]
-> Se o banco tiver mudanças incompatíveis, `assert_compatible()` imprime o relatório, gera os arquivos e encerra o processo com `exit code 2`.
+> If the database contains incompatible changes, `assert_compatible()` prints the report, generates the files, and exits the process with `exit code 2`.
 
 <br>
 
-### Construção manual com `SchemaGuard`
+### Manual construction with `SchemaGuard`
 
 ```python
 from driftbrake import SchemaGuard
@@ -1094,19 +1070,19 @@ from driftbrake import SchemaGuard
 guard = SchemaGuard(
     database_url="postgresql://user:pass@localhost:5432/mydb",
     contract_path="schema.lock.json",
-    config_path="driftbrake.yml",   # opcional
-    output_json="schema_diff.json",      # opcional
-    output_html="schema_report.html",    # opcional
-    output_markdown="schema_report.md",  # opcional
+    config_path="driftbrake.yml",   # optional
+    output_json="schema_diff.json",      # optional
+    output_html="schema_report.html",    # optional
+    output_markdown="schema_report.md",  # optional
     fail_on=["BREAKING"],
-    schemas=["public", "raw"],           # opcional, padrão: ["public"]
+    schemas=["public", "raw"],           # optional, default: ["public"]
 )
 
 guard.assert_compatible()
 run_pipeline()
 ```
 
-### Inspecionando o resultado manualmente
+### Inspecting the result manually
 
 ```python
 from driftbrake import SchemaGuard
@@ -1115,7 +1091,7 @@ from driftbrake.models import Severity
 guard = SchemaGuard.from_env(contract_path="schema.lock.json")
 result = guard.check()
 
-print(f"Total de mudanças: {len(result.changes)}")
+print(f"Total changes: {len(result.changes)}")
 print(f"Breaking: {result.breaking_count}")
 print(f"Warning:  {result.warning_count}")
 print(f"Safe:     {result.safe_count}")
@@ -1129,7 +1105,7 @@ if result.has_breaking:
     raise SystemExit(2)
 ```
 
-### Usando `SchemaComparator` diretamente
+### Using `SchemaComparator` directly
 
 ```python
 from driftbrake.readers.postgres import PostgresSchemaReader
@@ -1147,66 +1123,66 @@ for change in result.changes:
 
 <br>
 
-## Funcionamento
+## How it works
 
-O fluxo da versão atual:
+The current flow:
 
 ```
-schema.lock.json (contrato versionado no Git)
+schema.lock.json (contract versioned in Git)
         │
         ▼
-DriftBrake conecta no PostgreSQL
+DriftBrake connects to PostgreSQL
         │
         ▼
-lê schema atual automaticamente
+reads the current schema automatically
         │
         ▼
-compara esperado e atual
+compares expected against current
         │
-        ├── OK ──────────────────── pipeline executa
+        ├── OK ──────────────────── pipeline runs
         │
-        └── BREAKING ────────────── pipeline bloqueado
-                                    ├── exibe no terminal
-                                    ├── gera schema_diff.json
-                                    └── gera schema_report.html
+        └── BREAKING ────────────── pipeline blocked
+                                    ├── displays in terminal
+                                    ├── generates schema_diff.json
+                                    └── generates schema_report.html
 ```
 
-### Tipos de mudança detectados
+### Change types detected
 
-A ferramenta detecta as seguintes categorias de alteração em cada comparação:
+The tool detects the following categories of change in every comparison:
 
-| Tipo | O que significa |
+| Type | What it means |
 |---|---|
-| `table_added` | Uma tabela nova apareceu no banco |
-| `table_removed` | Uma tabela que existia sumiu do banco |
-| `column_added` | Uma coluna nova foi adicionada a uma tabela existente |
-| `column_removed` | Uma coluna foi removida de uma tabela existente |
-| `type_changed` | O tipo de dado de uma coluna mudou (ex: `INTEGER` → `TEXT`) |
-| `nullable_changed` | A coluna deixou de aceitar NULL ou passou a aceitar |
-| `default_changed` | O valor padrão da coluna mudou ou foi removido |
-| `primary_key_changed` | Uma coluna ganhou ou perdeu a chave primária |
-| `unique_changed` | Uma constraint `UNIQUE` foi adicionada ou removida |
-| `foreign_key_changed` | Uma chave estrangeira foi alterada |
-| `foreign_key_added` | Uma chave estrangeira foi criada onde não havia |
-| `ordinal_position_changed` | A posição da coluna na tabela mudou |
-| `possible_rename` | Uma coluna foi removida e outra coluna semelhante foi adicionada na mesma tabela. A ferramenta trata isso apenas como uma suspeita de rename, nunca como confirmação. Sempre classificado como `WARNING`. |
+| `table_added` | A new table appeared in the database |
+| `table_removed` | A table that existed is gone from the database |
+| `column_added` | A new column was added to an existing table |
+| `column_removed` | A column was removed from an existing table |
+| `type_changed` | A column's data type changed (e.g. `INTEGER` → `TEXT`) |
+| `nullable_changed` | The column stopped accepting NULL or started accepting it |
+| `default_changed` | The column's default value changed or was removed |
+| `primary_key_changed` | A column gained or lost its primary key |
+| `unique_changed` | A `UNIQUE` constraint was added or removed |
+| `foreign_key_changed` | A foreign key was modified |
+| `foreign_key_added` | A foreign key was created where there was none |
+| `ordinal_position_changed` | The column's position in the table changed |
+| `possible_rename` | A column was removed and a similar one was added in the same table. The tool only flags this as a suspicion of rename, never as a confirmation. Always classified as `WARNING`. |
 
 > [!IMPORTANT]
-> `possible_rename` é uma heurística, nunca uma confirmação. O DriftBrake sinaliza a suspeita quando uma coluna removida e uma coluna adicionada parecem compatíveis por tipo. A validação final deve ser feita por quem revisa a migration.
+> `possible_rename` is a heuristic, never a confirmation. DriftBrake flags the suspicion when a removed column and an added column appear type-compatible. Final validation must be done by whoever reviews the migration.
 
 <br>
 
-### Confiança do `possible_rename`
+### `possible_rename` confidence
 
-Cada ocorrência de `possible_rename` traz um campo `confidence` que indica o grau de certeza da heurística:
+Each `possible_rename` occurrence carries a `confidence` field indicating how certain the heuristic is:
 
-| Nível | Critério |
+| Level | Criteria |
 |---|---|
-| `high` | Nome similar + mesmo tipo + posição ordinal próxima (diferença ≤ 2) |
-| `medium` | Mesmo tipo + posição ordinal próxima (diferença ≤ 2) |
-| `low` | Apenas tipo compatível (SAFE ou WARNING na matriz de tipos) |
+| `high` | Similar name + same type + close ordinal position (difference ≤ 2) |
+| `medium` | Same type + close ordinal position (difference ≤ 2) |
+| `low` | Only type-compatible (SAFE or WARNING in the type matrix) |
 
-**Exemplo no relatório JSON:**
+**Example in the JSON report:**
 
 ```json
 {
@@ -1223,39 +1199,39 @@ Cada ocorrência de `possible_rename` traz um campo `confidence` que indica o gr
 }
 ```
 
-**Regras importantes:**
+**Important rules:**
 
-- `possible_rename` **nunca** é classificado como `BREAKING` automaticamente, é sempre `WARNING`.
-- Um `confidence: "high"` ainda é uma suspeita, não uma certeza.
-- Sempre revise as migrations antes de aceitar um rename com `driftbrake update-contract`.
+- `possible_rename` is **never** automatically classified as `BREAKING` — always `WARNING`.
+- A `confidence: "high"` is still a suspicion, not a certainty.
+- Always review migrations before accepting a rename with `driftbrake update-contract`.
 
 <br>
 
-## Fluxo típico após uma migration:
+## Typical flow after a migration:
 
 ```bash
-# 1. Rodar a migration no banco
+# 1. Run the migration on the database
 psql -U postgres -d mydb -f migration_001.sql
 
-# 2. Verificar o que mudou
+# 2. Check what changed
 driftbrake check
 
-# 3. Se as mudanças são as esperadas, aceitar e atualizar o contrato
+# 3. If the changes are expected, accept them and update the contract
 driftbrake update-contract --yes
 
-# 4. Commitar o novo contrato junto com a migration
+# 4. Commit the new contract alongside the migration
 git add schema.lock.json migration_001.sql
-git commit -m "migration: adiciona coluna email_verificado na tabela users"
+git commit -m "migration: add email_verified column to users table"
 ```
 
-## Uso sem `--db-url` (via `.env`)
+## Usage without `--db-url` (via `.env`)
 
-Em todos os comandos, a opção `--db-url` é opcional. Quando omitida, a ferramenta busca as credenciais na seguinte ordem:
+In every command, `--db-url` is optional. When omitted, the tool looks for credentials in the following order:
 
-1. Variável de ambiente `DATABASE_URL` (tem prioridade máxima)
-2. Combinação de `DB_HOST` + `DB_PORT` + `DB_NAME` + `DB_USER` + `DB_PASSWORD`
+1. Environment variable `DATABASE_URL` (highest priority)
+2. Combination of `DB_HOST` + `DB_PORT` + `DB_NAME` + `DB_USER` + `DB_PASSWORD`
 
-Se você tiver o `.env` carregado no shell (por exemplo com `source .env` ou usando uma ferramenta como `dotenv`), pode rodar qualquer comando sem passar credenciais:
+If you have `.env` loaded in the shell (e.g. with `source .env` or a tool like `dotenv`), you can run any command without passing credentials:
 
 ```bash
 source .env
@@ -1264,40 +1240,40 @@ driftbrake init
 driftbrake snapshot
 ```
 
-Ou simplesmente rodar de dentro do diretório do projeto — muitas ferramentas (como `uv run`, `direnv`, `docker-compose`) carregam o `.env` automaticamente.
+Or simply run from inside the project directory — many tools (such as `uv run`, `direnv`, `docker-compose`) load `.env` automatically.
 
 <br>
 
-## Classificação de Mudanças
+## Drifts classification
 
-### Tabelas
+### Tables
 
-| Mudança | Severidade padrão |
+| Drifts | Default severity |
 |---|---|
-| Tabela removida | BREAKING |
-| Tabela adicionada | SAFE |
+| Table removed | BREAKING |
+| Table added | SAFE |
 
-### Colunas
+### Columns
 
-| Mudança | Severidade padrão |
+| Drifts | Default severity |
 |---|---|
-| Coluna removida | BREAKING |
-| Coluna adicionada (nullable) | SAFE |
-| Coluna adicionada (NOT NULL sem default) | BREAKING |
-| Coluna adicionada (NOT NULL com default) | WARNING |
-| NOT NULL adicionado | BREAKING |
-| NOT NULL removido | WARNING |
-| Default alterado | WARNING |
-| Primary key alterada | BREAKING |
-| Unique constraint alterada | WARNING |
-| Foreign key adicionada | WARNING |
-| Foreign key alterada | BREAKING |
-| Posição ordinal alterada | WARNING |
-| Possível rename detectado | WARNING |
+| Column removed | BREAKING |
+| Column added (nullable) | SAFE |
+| Column added (NOT NULL without default) | BREAKING |
+| Column added (NOT NULL with default) | WARNING |
+| NOT NULL added | BREAKING |
+| NOT NULL removed | WARNING |
+| Default changed | WARNING |
+| Primary key changed | BREAKING |
+| Unique constraint changed | WARNING |
+| Foreign key added | WARNING |
+| Foreign key changed | BREAKING |
+| Ordinal position changed | WARNING |
+| Possible rename detected | WARNING |
 
-### Tipos PostgreSQL (matriz de compatibilidade)
+### PostgreSQL types (compatibility matrix)
 
-| Conversão | Severidade |
+| Conversion | Severity |
 |---|---|
 | `varchar(50)` → `varchar(100)` | SAFE |
 | `varchar(100)` → `varchar(50)` | BREAKING |
@@ -1317,20 +1293,20 @@ Ou simplesmente rodar de dentro do diretório do projeto — muitas ferramentas 
 
 ## Stack
 
-- **SQLAlchemy** — reflection/inspection do PostgreSQL
+- **SQLAlchemy** — PostgreSQL reflection/inspection
 - **Typer** — CLI
-- **Rich** — output no terminal
-- **Jinja2** — templates HTML
-- **python-dotenv** — variáveis de ambiente
-- **PyYAML** — configuração
-- **pytest** — testes
+- **Rich** — terminal output
+- **Jinja2** — HTML templates
+- **python-dotenv** — environment variables
+- **PyYAML** — configuration
+- **pytest** — tests
 
-## Licença
+## License
 
 **MIT license**
 
-## Autor
+## Author
 
-**Yuri Pontes** — Ex-Cabo do Exército Brasileiro em transição para engenharia de dados.
+**Yuri Pontes** — Former Cabo (Corporal equivalent) - Brazilian Army, transitioning to data engineering.
 
 [LinkedIn](https://www.linkedin.com/in/yuri-pontes-4ba24a345/) · [GitHub](https://github.com/yurivski)

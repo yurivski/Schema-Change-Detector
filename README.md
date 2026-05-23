@@ -17,11 +17,10 @@
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/MIT-License-blue.svg)
 
-**DriftBrake** is a Python package that automatically reads the current schema of a PostgreSQL database, compares it against a versioned contract, classifies changes by impact, and can block pipelines before they break in production.
+**DriftBrake** is a Python package that automatically reads the current schema of a PostgreSQL database, compares it against a versioned contract, classifies drifts by impact, and can block pipelines before they break in production.
 
 The tool catches bugs that could silently corrupt or break data pipelines before they reach production. The idea is simple: you create a "contract" describing exactly how your database should look. Before running any pipeline, DriftBrake compares the actual database against this contract and warns you (or blocks you) if anything has changed.
 
------------------
 <br>
 
 
