@@ -1,8 +1,7 @@
-
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="imagens/db_banner_dark.svg">
-    <img alt="DriftBrake-Banner" src="imagens/db_banner_white.svg" width="560">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" src="docs/img/db_banner_white.svg" width="560">
   </picture>
 </div>
 
@@ -23,6 +22,10 @@
 A ferramenta identifica bugs capazes de corromper ou quebrar pipelines em silêncio, antes do deploy em produção, com um conceito simples: você cria um "contrato" que descreve exatamente como seu banco deve ser. Antes de executar qualquer pipeline, a ferramenta compara o banco real com esse contrato e avisa (ou bloqueia) se algo mudou.
 
 <br>
+
+> [!NOTE]
+> **Documentação:** [Clique aqui!](/docs/DOCUMENTATION-BR.md)
+
 
 ## A ferramenta
 
