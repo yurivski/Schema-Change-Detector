@@ -1,8 +1,8 @@
 
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="imagens/db_banner_white.svg">
-    <img alt="DriftBrake-Banner" src="imagens/db_banner_dark.svg" width="560">
+    <source media="(prefers-color-scheme: dark)" srcset="imagens/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" src="imagens/db_banner_white.svg" width="560">
   </picture>
 </div>
 
