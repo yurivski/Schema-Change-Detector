@@ -1,7 +1,10 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="img/db_banner_dark.svg">
-    <img alt="DriftBrake-Banner" src="img/db_banner_white.svg" width="560">
+    <source media="(prefers-color-scheme: dark)" 
+            srcset="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" 
+         src="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_white.svg" 
+         width="560">
   </picture>
 </div>
 

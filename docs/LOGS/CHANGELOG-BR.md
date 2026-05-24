@@ -8,6 +8,23 @@ Todas as mudanças significativas neste projeto são documentadas neste arquivo.
 
 <br>
 
+## [0.0.3] (2026-05-23)
+
+### Alterado
+
+- **README completamente redesenhado.** Novo layout com banner, badges (status do CI,
+  versão no PyPI, downloads, versão do Python, licença) e link em destaque para a
+  documentação completa. Identidade visual alinhada com projetos open source maduros.
+- **README e DOCUMENTATION disponíveis em dois idiomas.** Versão em inglês
+  (`README.md`, `DOCUMENTATION.md`) e versão em português brasileiro
+  (`README-BR.md`, `DOCUMENTATION-BR.md`).
+- **Documentação reorganizada.** Referência técnica movida do README para o
+  DOCUMENTATION, mantendo o README focado na apresentação do projeto.
+
+Sem alterações de código ou comportamento em relação à 0.0.2.
+
+---
+
 ## [0.0.2] — 2026-05-22
 
 ### Adicionado
@@ -153,5 +170,6 @@ Versão inicial publicada para travar o nome `driftbrake` no PyPI.
 
 ---
 
+[0.0.3]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.3
 [0.0.2]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.2
 [0.0.1]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.1

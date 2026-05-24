@@ -1,7 +1,10 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/img/db_banner_dark.svg">
-    <img alt="DriftBrake-Banner" src="docs/img/db_banner_white.svg" width="560">
+    <source media="(prefers-color-scheme: dark)" 
+            srcset="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" 
+         src="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_white.svg" 
+         width="560">
   </picture>
 </div>
 
@@ -24,8 +27,8 @@ The tool catches bugs that could silently corrupt or break data pipelines before
 <br>
 
 > [!NOTE]
-> **Documentation:** [Click here!](/docs/DOCUMENTATION.md)  
-> **Readme versão BR:** [Clique aqui!](/README-BR.md)
+> **Documentation:** [Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION.md)  
+> **Readme versão BR:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/README-BR.md)
 
 ## The tool
 

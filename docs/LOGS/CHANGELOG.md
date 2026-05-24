@@ -6,9 +6,29 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 <br>
 
-## [0.0.2] — 2026-05-22
+## [0.0.3] (2026-05-23)
+
+### Changed
+
+- **README completely redesigned.** New layout with banner, badges (CI status, 
+  PyPI version, downloads, Python version, license), and prominent link to 
+  full documentation. Visual identity aligned with mature open source projects.
+- **README and DOCUMENTATION available in two languages.** English version 
+  (`README.md`, `DOCUMENTATION.md`) and Brazilian Portuguese version 
+  (`README-BR.md`, `DOCUMENTATION-BR.md`).
+- **Documentation reorganized.** Technical reference moved from README to 
+  DOCUMENTATION, keeping README focused on showcase.
+
+No code or behavior changes from 0.0.2.
+
+---
+
+## [0.0.2] (2026-05-22)
 
 ### Added
 
@@ -40,7 +60,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [0.0.1] — 2026-05-21
+## [0.0.1] (2026-05-21)
 
 Initial release published to reserve the `driftbrake` name on PyPI.
 
@@ -153,5 +173,6 @@ Initial release published to reserve the `driftbrake` name on PyPI.
 
 ---
 
+[0.0.3]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.3
 [0.0.2]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.2
 [0.0.1]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.1

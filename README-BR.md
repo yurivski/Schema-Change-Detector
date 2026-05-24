@@ -1,7 +1,10 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/img/db_banner_dark.svg">
-    <img alt="DriftBrake-Banner" src="docs/img/db_banner_white.svg" width="560">
+    <source media="(prefers-color-scheme: dark)" 
+            srcset="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_dark.svg">
+    <img alt="DriftBrake-Banner" 
+         src="https://raw.githubusercontent.com/yurivski/DriftBrake/main/docs/img/db_banner_white.svg" 
+         width="560">
   </picture>
 </div>
 
@@ -24,7 +27,7 @@ A ferramenta identifica bugs capazes de corromper ou quebrar pipelines em silên
 <br>
 
 > [!NOTE]
-> **Documentação:** [Clique aqui!](/docs/DOCUMENTATION-BR.md)
+> **Documentação:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION-BR.md)
 
 
 ## A ferramenta
