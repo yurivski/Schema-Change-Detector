@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [
-    { name = "Yuri Pontes", email = "yurilbrok23@gmail.com" },
+    { name = "Yuri Pontes", email = "yuripontes.cont@gmail.com" },
 ]
 keywords = ["schema", "database", "data-engineering", "postgresql", "contract-testing"]
 classifiers = [

@@ -26,9 +26,8 @@ The tool catches bugs that could silently corrupt or break data pipelines before
 
 <br>
 
-> [!NOTE]
 > **Documentation:** [Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION.md)  
-> **Readme versão BR:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/README-BR.md)
+> **Readme versão BR:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/README-BR.md)  
 
 ## The tool
 
@@ -84,7 +83,6 @@ When a change is deliberate and approved, use `update-contract` to update the co
 
 **Diff:** the difference found between the contract (what was expected) and the actual database (what exists now).
 
-> [!NOTE]
 > ***Expected contract & current database:** the comparator always treats the contract as the "agreed-upon truth" and the database as the "actual state." If something exists in the database but not in the contract, it's an addition. If it exists in the contract but is missing from the database, it's a removal.*
 
 
@@ -159,7 +157,6 @@ The tool detects the following categories of change in every comparison:
 | `ordinal_position_changed` | The column's position in the table changed |
 | `possible_rename` | A column was removed and a similar one was added in the same table. The tool only flags this as a suspicion of rename, never as a confirmation. Always classified as `WARNING`. |
 
-> [!IMPORTANT]
 > `possible_rename` is a heuristic, never a confirmation. DriftBrake flags the suspicion when a removed column and an added column appear type-compatible. Final validation must be done by whoever reviews the migration.
 
 <br>

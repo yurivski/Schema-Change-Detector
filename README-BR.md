@@ -27,7 +27,7 @@ A ferramenta identifica bugs capazes de corromper ou quebrar pipelines em silên
 <br>
 
 > [!NOTE]
-> **Documentação:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION-BR.md)
+> **Documentação:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION-BR.md)  
 
 
 ## A ferramenta
