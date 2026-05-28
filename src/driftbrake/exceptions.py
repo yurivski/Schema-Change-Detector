@@ -1,21 +1,86 @@
-# Exceções personalizadas do DriftBrake.
+# Hierarquia de exceções do DriftBrake.
 
 
-class SchemaDetectorError(Exception):
-    """Exceção base para todos os erros do schema detector."""
+class DriftBrakeError(Exception):
+    """Exceção base. Toda exceção da lib herda desta."""
+
+    exit_code: int = 1
+
+
+class ContractMissingError(DriftBrakeError):
+    """Contrato não encontrado e auto_init desabilitado."""
+
+    exit_code = 4
+
+
+class BreakingChangesDetected(DriftBrakeError):
+    """Schema possui mudanças classificadas como bloqueantes."""
+
+    exit_code = 2
+
+    def __init__(self, result, message: str | None = None):
+        self.result = result
+        super().__init__(message or f"{result.breaking_count} breaking change(s) detected")
+
+
+class UserAborted(DriftBrakeError):
+    """Usuário recusou interativamente."""
+
+    exit_code = 7
+
+
+class MissingDatabaseURL(DriftBrakeError):
+    """from_env() não encontrou DATABASE_URL no ambiente."""
+
+    exit_code = 5
+
+
+class PolicyError(DriftBrakeError):
+    """Erro ao carregar ou parsear o arquivo de política."""
+
+    exit_code = 5
+
+
+class SchemaNotFoundError(DriftBrakeError):
+    """Schema configurado não existe no banco."""
+
+    exit_code = 5
+
+
+class ContractWriteError(DriftBrakeError):
+    """Falha ao escrever contrato no disco (permissão, espaço, FS)."""
+
+    exit_code = 6
+
+
+# Exceções legadas (v0.0.2) mantidas para compatibilidade
+
+
+class SchemaDetectorError(DriftBrakeError):
+    """Exceção base legada."""
+
+    exit_code: int = 1
 
 
 class SchemaContractNotFoundError(SchemaDetectorError):
-    """Lançada quando o arquivo de contrato de schema não é encontrado ou não pode ser carregado."""
+    """Contrato não encontrado (legado)."""
+
+    exit_code = 4
 
 
 class SchemaConnectionError(SchemaDetectorError):
-    """Lançada quando não é possível estabelecer conexão com o banco de dados."""
+    """Erro de conexão com o banco (legado)."""
+
+    exit_code = 3
 
 
 class BreakingSchemaChangeError(SchemaDetectorError):
-    """Lançada quando alterações críticas são detectadas e fail_on está configurado."""
+    """Alterações críticas detectadas (legado)."""
+
+    exit_code = 2
 
 
 class ConfigurationError(SchemaDetectorError):
-    """Lançada quando há um erro no arquivo de configuração ou nas definições."""
+    """Erro de configuração (legado)."""
+
+    exit_code = 5
