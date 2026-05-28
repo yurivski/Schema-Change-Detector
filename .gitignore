@@ -35,6 +35,7 @@ tmp/
 *.bak
 *.backup
 
+.coverage
 uv.lock
 examples/
 testes/

@@ -4,24 +4,28 @@ DriftBrake
 
 A schema contract guard for data pipelines.
 Detects, classifies, and reports schema changes in PostgreSQL databases.
-
-Quick start:
-    from driftbrake import SchemaGuard
-
-    SchemaGuard.from_env(
-        contract_path="schema.lock.json",
-        fail_on=["BREAKING"],
-    ).assert_compatible()
 """
 
 from driftbrake.classifiers.impact_classifier import ImpactClassifier
 from driftbrake.comparators.schema_comparator import SchemaComparator
+from driftbrake.decision import Decision, decide
+from driftbrake.driftbrake import DriftBrake
 from driftbrake.exceptions import (
+    # v0.1.0 hierarchy
+    BreakingChangesDetected,
+    # legacy (v0.0.2) — kept for backward compatibility
     BreakingSchemaChangeError,
     ConfigurationError,
+    ContractMissingError,
+    ContractWriteError,
+    DriftBrakeError,
+    MissingDatabaseURL,
+    PolicyError,
     SchemaConnectionError,
     SchemaContractNotFoundError,
     SchemaDetectorError,
+    SchemaNotFoundError,
+    UserAborted,
 )
 from driftbrake.guard import SchemaGuard
 from driftbrake.models import (
@@ -33,21 +37,46 @@ from driftbrake.models import (
     Severity,
     TableSchema,
 )
+from driftbrake.policy import Policy, load_policy
+from driftbrake.prompters import NonInteractivePrompter, StdinPrompter
+from driftbrake.protocols import Prompter, Reporter
 from driftbrake.readers.json_reader import JsonSchemaReader
 from driftbrake.readers.postgres import PostgresSchemaReader
+from driftbrake.reporters.facade_terminal import FacadeTerminalReporter as TerminalReporter
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"
 
 __all__ = [
-    # High-level API
+    # v0.1.0 facade
+    "DriftBrake",
+    # Decision
+    "Decision",
+    "decide",
+    # Policy
+    "Policy",
+    "load_policy",
+    # Protocols
+    "Reporter",
+    "Prompter",
+    # Built-in implementations
+    "TerminalReporter",
+    "StdinPrompter",
+    "NonInteractivePrompter",
+    # v0.1.0 exceptions
+    "DriftBrakeError",
+    "BreakingChangesDetected",
+    "ContractMissingError",
+    "ContractWriteError",
+    "MissingDatabaseURL",
+    "PolicyError",
+    "SchemaNotFoundError",
+    "UserAborted",
+    # Legacy API (v0.0.2)
     "SchemaGuard",
-    # Comparators and classifiers
     "SchemaComparator",
     "ImpactClassifier",
-    # Readers
     "PostgresSchemaReader",
     "JsonSchemaReader",
-    # Models
     "DatabaseSchema",
     "TableSchema",
     "ColumnSchema",
@@ -55,7 +84,7 @@ __all__ = [
     "DiffResult",
     "Severity",
     "ChangeType",
-    # Exceptions
+    # legacy exceptions
     "SchemaDetectorError",
     "SchemaContractNotFoundError",
     "SchemaConnectionError",
