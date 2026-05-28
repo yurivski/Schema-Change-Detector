@@ -1,7 +1,10 @@
 """
 Testes unitários para SchemaComparator.
-
 Todos os testes usam fixtures em memória, sem nenhuma conexão com banco de dados.
+
+Pra evitar que o arquivo fique muito grande, apenas as chamadas com argumentos
+acima de 100 caracteres terão quebras de linhas.
+
 """
 
 from datetime import datetime
@@ -103,7 +106,7 @@ class TestColumnAddedNullable:
         changes = [
             c
             for c in result.changes
-            if c.change_type == ChangeType.COLUMN_ADDED and c.column_name == "new_col"
+            if c.change_type == ChangeType.NULLABLE_COLUMN_ADDED and c.column_name == "new_col"
         ]
         assert len(changes) == 1
         assert changes[0].severity == Severity.SAFE

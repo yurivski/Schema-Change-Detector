@@ -1,5 +1,8 @@
-# Testes unitários para a matriz de compatibilidade de tipos.
-
+"""
+Testes unitários para a matriz de compatibilidade de tipos.
+Pra evitar que o arquivo fique muito grande, apenas as chamadas com argumentos
+acima de 100 caracteres terão quebras de linhas.
+"""
 
 from driftbrake.classifiers.type_compatibility import classify_type_change
 from driftbrake.models import Severity
