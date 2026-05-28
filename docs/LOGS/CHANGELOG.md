@@ -11,17 +11,119 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <br>
 
+## [0.1.0] (2026-05-28)
+
+First public release of the high-level `DriftBrake` facade. The library now ships with an orchestration layer on top of the existing `SchemaGuard` engine — designed to be dropped straight into Python pipelines without writing glue code.
+
+The v0.0.2 API (`SchemaGuard.from_env().assert_compatible()`) still works exactly as before. v0.1.0 adds new entry points alongside it, not in place of it.
+
+### Added
+
+- **`DriftBrake` class** — high-level facade. Four ways to use it:
+  - `DriftBrake(...)` — direct construction with keyword arguments.
+  - `DriftBrake.from_env(**overrides)` — reads `DATABASE_URL` from the environment; keyword arguments override env values.
+  - `DriftBrake.from_env(...).protect()` — runs the protection cycle and raises typed exceptions on failure.
+  - `DriftBrake.run_from_env(**kwargs)` — single-line entry point that translates *every* `DriftBrakeError` (including construction errors like `MissingDatabaseURL`) into the right exit code.
+
+- **Async API** — `aprotect()` and `aprotect_or_exit()` for use inside `async def` pipelines. Implemented via `asyncio.to_thread`, so the event loop stays responsive during the scan.
+
+- **Context manager** — `with DriftBrake.from_env().guard_block(): ...` runs the protection check on entry; blocks the body from executing if drift is detected.
+
+- **`Decision` dataclass and `decide()` function** in `driftbrake.decision`. The decision matrix (release / ask / block) lives as a single deterministic function that's testable without mocks. Useful if you want to inspect the decision before running anything.
+
+- **`Reporter` and `Prompter` protocols** (PEP 544, `@runtime_checkable`) in `driftbrake.protocols`. Any object implementing the protocol methods can replace the default terminal output or interactive prompt — e.g. a JSON reporter for log aggregators, a Slack prompter, a silent reporter for tests.
+
+- **Built-in implementations**:
+  - `TerminalReporter` — default. Concise output with `[INFO]`, `[WARN]`, `[BLOCKED]` prefixes. Honors `verbose=True/False`.
+  - `StdinPrompter` — default when stdin is interactive.
+  - `NonInteractivePrompter` — default in non-interactive contexts (CI, cron). Always returns `False`.
+
+- **Policy files** via `driftbrake.policy`:
+  - `Policy` dataclass with `overrides`, `ignore_tables`, `ignore_columns`.
+  - `load_policy(path)` parses a YAML file.
+  - `DriftBrake(policy_path="driftbrake.policy.yml")` loads and applies the policy during evaluation. Overrides preserve the original change description and append `[overridden by policy: SEVERITY]` for audit trail.
+
+- **`NULLABLE_COLUMN_ADDED` change type** — separates nullable additions from `NOT NULL` additions. Lets policies target each case independently (e.g. mark every nullable add as `WARNING` instead of the default `SAFE`).
+
+- **Typed exception hierarchy** in `driftbrake.exceptions`:
+  - `DriftBrakeError` (base, exit 1)
+  - `BreakingChangesDetected` (exit 2) — carries the `CheckResult` on `.result`.
+  - `SchemaConnectionError` (exit 3) — database unreachable.
+  - `ContractMissingError` / `SchemaContractNotFoundError` (exit 4)
+  - `MissingDatabaseURL`, `PolicyError`, `ConfigurationError`, `SchemaNotFoundError` (exit 5)
+  - `ContractWriteError` (exit 6) — filesystem write failure during contract creation.
+  - `UserAborted` (exit 7)
+  
+  All legacy v0.0.2 exceptions (`SchemaConnectionError`, `SchemaContractNotFoundError`, `BreakingSchemaChangeError`, `ConfigurationError`) now inherit from `DriftBrakeError`. Pre-existing code that catches them keeps working; new code that catches `DriftBrakeError` catches everything.
+
+- **`SchemaNotFoundError`** — raised when `schemas=[...]` references a schema that doesn't exist in the database. Fails loud with the list of available schemas instead of silently scanning only the existing ones.
+
+- **`interactive="auto"` mode** — resolves to `True` only when both `sys.stdin` and `sys.stdout` are TTYs. Safe default for CI/CD, Docker, cron, and pipeline orchestrators that have no terminal attached.
+
+- **Configurable strictness via `fail_on` and `ask_on`** — both accept any combination of `BREAKING`, `WARNING`, `SAFE`. The library doesn't override user choices: putting `SAFE` in `fail_on` blocks on safe changes, as configured.
+
+- **Public exports** in `__init__.py`: `DriftBrake`, `SchemaGuard`, `Decision`, `decide`, `Policy`, `load_policy`, `Reporter`, `Prompter`, `TerminalReporter`, `StdinPrompter`, `NonInteractivePrompter`, and the full exception hierarchy.
+
+### Changed
+
+- `__version__` bumped to `0.1.0`.
+- `SchemaGuard` accepts an optional `policy` parameter for severity overrides and ignore lists. Behavior is unchanged when `policy=None`.
+
+### Internal
+
+New module structure under `src/driftbrake/`:
+
+- `driftbrake.py` — facade class.
+- `decision.py` — pure decision logic.
+- `exceptions.py` — exception hierarchy.
+- `protocols.py` — Reporter / Prompter protocols.
+- `reporters/facade_terminal.py` — built-in reporters.
+- `prompters.py` — built-in prompters.
+- `policy.py` — policy loader.
+- `guard.py` — existing `SchemaGuard` engine (surface unchanged; gains optional `policy=` argument).
+
+### Tests
+
+- 109 tests total (52 new).
+- Parametrized matrix tests for `decide()` covering every severity × `fail_on` × `ask_on` × `interactive` combination.
+- Integration tests for `DriftBrake.protect()` using `FakePrompter` and `RecordingReporter` to avoid stdin/stdout mocking.
+- TTY detection tests for `interactive="auto"`.
+- Policy loading tests (valid YAML, missing file, malformed YAML, invalid severity).
+- Async cycle tests (`aprotect`, `aprotect_or_exit`).
+- Context manager tests (`guard_block`).
+- Edge case suite: database unreachable, JSON corruption, schema not found, read-only filesystem, wrong credentials.
+
+### Migration notes
+
+The v0.0.2 API is **unchanged and still recommended for simple cases**. v0.1.0 adds the `DriftBrake` facade alongside `SchemaGuard`. No breaking changes.
+
+```python
+# v0.0.2 — still works
+from driftbrake import SchemaGuard
+SchemaGuard.from_env(contract_path="schema.lock.json", fail_on=["BREAKING"]).assert_compatible()
+run_pipeline()
+
+# v0.1.0 — recommended for new pipelines
+from driftbrake import DriftBrake
+DriftBrake.run_from_env()
+run_pipeline()
+```
+
+The two styles differ in output: `assert_compatible()` produces a verbose CLI-style report with Rich panels; `DriftBrake.protect()`/`run_from_env()` produce concise pipeline-style log lines with `[INFO]`/`[WARN]`/`[BLOCKED]` prefixes. Both are intentional — pick the one that fits your context.
+
+---
+
 ## [0.0.3] (2026-05-23)
 
 ### Changed
 
-- **README completely redesigned.** New layout with banner, badges (CI status, 
-  PyPI version, downloads, Python version, license), and prominent link to 
+- **README completely redesigned.** New layout with banner, badges (CI status,
+  PyPI version, downloads, Python version, license), and prominent link to
   full documentation. Visual identity aligned with mature open source projects.
-- **README and DOCUMENTATION available in two languages.** English version 
-  (`README.md`, `DOCUMENTATION.md`) and Brazilian Portuguese version 
+- **README and DOCUMENTATION available in two languages.** English version
+  (`README.md`, `DOCUMENTATION.md`) and Brazilian Portuguese version
   (`README-BR.md`, `DOCUMENTATION-BR.md`).
-- **Documentation reorganized.** Technical reference moved from README to 
+- **Documentation reorganized.** Technical reference moved from README to
   DOCUMENTATION, keeping README focused on showcase.
 
 No code or behavior changes from 0.0.2.
@@ -173,6 +275,7 @@ Initial release published to reserve the `driftbrake` name on PyPI.
 
 ---
 
+[0.1.0]: https://github.com/yurivski/DriftBrake/releases/tag/v0.1.0
 [0.0.3]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.3
 [0.0.2]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.2
 [0.0.1]: https://github.com/yurivski/DriftBrake/releases/tag/v0.0.1

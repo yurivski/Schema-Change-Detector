@@ -26,8 +26,10 @@ The tool catches bugs that could silently corrupt or break data pipelines before
 
 <br>
 
-> **Documentation:** [Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION.md)  
-> **Readme versão BR:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/README-BR.md)  
+> **Documentation:** [US-Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION.md) | [BR-Clique Aqui!](https://github.com/yurivski/DriftBrake/blob/main/docs/DOCUMENTATION-br.md)  
+> **Readme versão BR:** [Clique aqui!](https://github.com/yurivski/DriftBrake/blob/main/README-br.md)  
+> **Classification Audit:** [US-Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/AUDIT.md) | [BR-Clique Aqui!](https://github.com/yurivski/DriftBrake/blob/main/docs/AUDIT-br.md)     
+> **Changelog:** [Click here!](https://github.com/yurivski/DriftBrake/blob/main/docs/LOGS/CHANGELOG.md)
 
 ## The tool
 
