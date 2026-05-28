@@ -23,6 +23,7 @@ class ChangeType(str, Enum):
     TABLE_ADDED = "table_added"
     TABLE_REMOVED = "table_removed"
     COLUMN_ADDED = "column_added"
+    NULLABLE_COLUMN_ADDED = "nullable_column_added"
     COLUMN_REMOVED = "column_removed"
     TYPE_CHANGED = "type_changed"
     NULLABLE_CHANGED = "nullable_changed"
@@ -189,12 +190,28 @@ class DiffResult:
         return len(self.safe_changes)
 
     @property
+    def breaking_count(self) -> int:
+        return self.total_breaking
+
+    @property
+    def warning_count(self) -> int:
+        return self.total_warnings
+
+    @property
+    def safe_count(self) -> int:
+        return self.total_safe
+
+    @property
     def has_breaking(self) -> bool:
         return self.total_breaking > 0
 
     @property
     def has_warnings(self) -> bool:
         return self.total_warnings > 0
+
+    @property
+    def has_safe(self) -> bool:
+        return self.total_safe > 0
 
     @property
     def is_compatible(self) -> bool:

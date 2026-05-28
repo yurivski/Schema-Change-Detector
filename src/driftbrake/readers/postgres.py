@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 from typing import Any
 
-from driftbrake.exceptions import SchemaConnectionError
+from driftbrake.exceptions import SchemaConnectionError, SchemaNotFoundError
 from driftbrake.models import ColumnSchema, DatabaseSchema, TableSchema
 from driftbrake.readers.base import SchemaReader
 
@@ -146,6 +146,18 @@ class PostgresSchemaReader(SchemaReader):
         db_schemas: dict[str, dict[str, TableSchema]] = {}
 
         try:
+            from sqlalchemy import text
+
+            with engine.connect() as conn:
+                result = conn.execute(text("SELECT schema_name FROM information_schema.schemata"))
+                existing = {row[0] for row in result}
+            missing = [s for s in self.schemas if s not in existing]
+            if missing:
+                raise SchemaNotFoundError(
+                    f"Schema(s) not found in database: {missing}. "
+                    f"Existing schemas: {sorted(existing)}"
+                )
+
             for schema_name in self.schemas:
                 db_schemas[schema_name] = {}
                 try:

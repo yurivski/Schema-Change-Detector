@@ -19,16 +19,16 @@ from driftbrake.models import (
 class SchemaComparator:
     """
     Detecta:
-    - Tabelas adicionadas/removidas
-    - Colunas adicionadas/removidas
-    - Alterações de tipo
-    - Alterações de nullable
-    - Alterações de default
-    - Alterações de chave primária
-    - Alterações de restrição unique
-    - Alterações de chave estrangeira
-    - Alterações de posição ordinal
-    - Possíveis renomeações de colunas (heurística)
+    Tabelas adicionadas/removidas
+    Colunas adicionadas/removidas
+    Alterações de tipo
+    Alterações de nullable
+    Alterações de default
+    Alterações de chave primária
+    Alterações de restrição unique
+    Alterações de chave estrangeira
+    Alterações de posição ordinal
+    Possíveis renomeações de colunas (heurística)
     """
 
     def __init__(self, classifier: ImpactClassifier | None = None) -> None:
@@ -174,7 +174,11 @@ class SchemaComparator:
             col = current.columns[col_name]
             changes.append(
                 self.classifier.build_change(
-                    change_type=ChangeType.COLUMN_ADDED,
+                    change_type=(
+                        ChangeType.NULLABLE_COLUMN_ADDED
+                        if col.nullable
+                        else ChangeType.COLUMN_ADDED
+                    ),
                     severity=self.classifier.classify_column_added(col),
                     schema_name=schema_name,
                     table_name=table_name,
