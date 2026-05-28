@@ -59,7 +59,7 @@ A API original. Ainda disponível e sem alterações. Pipelines existentes conti
 
 ### API v0.1.0 — `DriftBrake`
 
-A nova fachada. Projetada para embutir em pipelines Python com saída concisa, overrides de política, reporters customizados e suporte a async.
+A nova classe. Criada pra embutir em pipelines Python com saída concisa, overrides de política, reporters customizados e suporte a async.
 
 | | |
 |---|---|
@@ -214,7 +214,7 @@ columns:
 
 Passe o arquivo para a CLI com `--config driftbrake.yml` ou para o `SchemaGuard` com `config_path="driftbrake.yml"`.
 
-> Para o novo formato de arquivo de política usado pela fachada `DriftBrake` (`driftbrake.policy.yml` com `overrides`, `ignore_tables`, `ignore_columns`), veja a seção [Arquivos de política](#arquivos-de-política) abaixo.
+> Para o novo formato de arquivo de política usado pela classe `DriftBrake` (`driftbrake.policy.yml` com `overrides`, `ignore_tables`, `ignore_columns`), veja a seção [Arquivos de política](#arquivos-de-política) abaixo.
 
 ---
 </details>
@@ -838,7 +838,7 @@ Se seu pipeline tem **formato de shell**, use a CLI. Se tem **formato Python**, 
 
 </div>
 
-A classe `DriftBrake` é uma fachada que orquestra o ciclo completo de proteção: lê o contrato, escaneia o banco, compara, classifica, aplica políticas, decide e reporta. Você instancia uma vez no topo do pipeline, chama um método, e é isso.
+A classe `DriftBrake` orquestra o ciclo completo de proteção: lê o contrato, escaneia o banco, compara, classifica, aplica políticas, decide e reporta. Você instancia uma vez no topo do pipeline, chama um método, e é isso.
 
 Há **quatro pontos de entrada** dependendo de quanto controle você quer.
 
@@ -1072,7 +1072,7 @@ A verificação acontece no `__enter__`. Exceções dentro do bloco propagam nor
 
 ### Arquivos de política
 
-A fachada `DriftBrake` suporta um formato de arquivo de política com três seções:
+A classe `DriftBrake` suporta um formato de arquivo de política com três seções:
 
 ```yaml
 # driftbrake.policy.yml
@@ -1227,7 +1227,7 @@ if __name__ == "__main__":
 ```
 
 > [!NOTE]
-> Se o banco tiver mudanças incompatíveis, `assert_compatible()` imprime o relatório, gera os arquivos e encerra o processo com `exit code 2`. O estilo de saída é verboso estilo CLI com painéis Rich — diferente da saída concisa estilo pipeline do `DriftBrake.protect()`.
+> Se o banco tiver mudanças incompatíveis, `assert_compatible()` imprime o relatório, gera os arquivos e encerra o processo com `exit code 2`. O estilo de saída é verboso estilo CLI com painéis Rich, diferente da saída concisa estilo pipeline do `DriftBrake.protect()`.
 
 <br>
 
@@ -1317,7 +1317,7 @@ Toda exceção lançada pelo DriftBrake herda de `DriftBrakeError`. Cada uma car
 | `UserAborted` | `7` | Prompt interativo respondido com "não" |
 
 > [!NOTE]
-> `SchemaConnectionError` se origina na camada legada v0.0.2 (`PostgresSchemaReader`) mas se propaga sem modificação pelo caminho v0.1.0. Qualquer chamada a `guard.check()` — seja do `SchemaGuard` ou do `DriftBrake` — pode lançá-la. Capture-a explicitamente se precisar diferenciar falhas de conexão de falhas de drift.
+> `SchemaConnectionError` se origina na camada legada v0.0.2 (`PostgresSchemaReader`) mas se propaga sem modificação pelo caminho v0.1.0. Qualquer chamada a `guard.check()`, seja do `SchemaGuard` ou do `DriftBrake`, pode lançá-la. Capture-a explicitamente se precisar diferenciar falhas de conexão de falhas de drift.
 
 ### Exceções legadas v0.0.2 (ainda lançadas pelo `SchemaGuard`)
 
@@ -1331,7 +1331,7 @@ Toda exceção lançada pelo DriftBrake herda de `DriftBrakeError`. Cada uma car
 
 Todas as exceções legadas agora herdam de `DriftBrakeError`. Código que captura `DriftBrakeError` captura tanto erros novos quanto legados. Código que captura exceções legadas específicas continua funcionando exatamente como antes.
 
-### Mapeamento completo exceção → exit code
+### Mapeamento completo exceção - exit code
 
 | Código | Exceção(ões) | Origem |
 |---|---|---|
@@ -1545,7 +1545,7 @@ driftbrake init
 driftbrake snapshot
 ```
 
-Ou simplesmente rodar de dentro do diretório do projeto — muitas ferramentas (como `uv run`, `direnv`, `docker-compose`) carregam o `.env` automaticamente.
+Ou simplesmente rodar de dentro do diretório do projeto, muitas ferramentas (como `uv run`, `direnv`, `docker-compose`) carregam o `.env` automaticamente.
 
 <br>
 

@@ -47,6 +47,16 @@ DriftBrake runs **before** pipelines execute, verifying that the actual database
 
 <br>
 
+## Installation
+
+```bash
+# Installs the psycopg2-binary driver, required for the postgres connection
+pip install "driftbrake[postgres]"
+```
+
+> The `[dev]` extra includes `pre-commit`, `ruff`, `mypy`, `pytest`, and the other development tools.
+
+
 ## Example workflow
 
 The `schema.lock.json` (the contract) is generated automatically when you run `init`.
@@ -104,13 +114,26 @@ driftbrake check \
   --contract schema.lock.json \
   --fail-on BREAKING \
   --json schema_diff.json \
-  --html schema_report.html
+  --html schema_report.html \
+  --markdown schema_report.md
 ```
 
 **Update the contract after approving changes:**
 
 ```bash
 driftbrake update-contract --db-url "$DATABASE_URL" --contract schema.lock.json
+```
+
+**Save a snapshot without changing the contract:**
+
+```bash
+driftbrake snapshot --db-url "$DATABASE_URL" --output snapshots/schema_before.json
+```
+
+**Compare two snapshots (or a snapshot against the live database):**
+
+```bash
+driftbrake diff --old snapshots/schema_before.json --new-db "$DATABASE_URL"
 ```
 
 <br>
@@ -147,7 +170,8 @@ The tool detects the following categories of change in every comparison:
 |---|---|
 | `table_added` | A new table appeared in the database |
 | `table_removed` | A table that existed is gone from the database |
-| `column_added` | A new column was added to an existing table |
+| `column_added` | A NOT NULL column was added to an existing table |
+| `nullable_column_added` | A nullable column was added to an existing table |
 | `column_removed` | A column was removed from an existing table |
 | `type_changed` | A column's data type changed (e.g. `INTEGER` → `TEXT`) |
 | `nullable_changed` | The column stopped accepting NULL or started accepting it |
@@ -201,6 +225,35 @@ Each `possible_rename` occurrence carries a `confidence` field indicating how ce
 
 ---
 <br>
+
+## Python library
+
+The same detection engine is available as a Python library. The simplest integration is a single line before the pipeline:
+
+```python
+from driftbrake import DriftBrake
+
+DriftBrake.run_from_env()
+
+run_pipeline()
+```
+
+For pipelines that need to inspect the result before acting, `protect()` returns a `DiffResult` and raises typed exceptions on failure:
+
+```python
+from driftbrake import DriftBrake
+from driftbrake.exceptions import BreakingChangesDetected
+
+try:
+    result = DriftBrake.from_env().protect()
+except BreakingChangesDetected as e:
+    notify_slack(f"Pipeline blocked: {len(e.result.changes)} breaking changes")
+    raise
+
+run_pipeline(result)
+```
+
+See the full documentation for policy overrides, custom reporters, async support, and the context manager API.
 
 ## Stack
 

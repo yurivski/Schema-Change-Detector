@@ -13,9 +13,7 @@
 
 <div align="center">
 
-**DriftBrake reads the current PostgreSQL schema automatically, compares it against a versioned
-contract, classifies drifts by impact (BREAKING, WARNING, SAFE), and blocks pipelines
-when incompatible changes are detected, before they cause failures in production.**
+**DriftBrake reads the current PostgreSQL schema automatically, compares it against a versioned contract, classifies drifts by impact (BREAKING, WARNING, SAFE), and blocks pipelines when incompatible changes are detected, before they cause failures in production.**
 
 </div>
 
@@ -128,7 +126,7 @@ DriftBrake 0.1.0
 ```
 
 > [!NOTE]
-> If you `pip install driftbrake` without `[postgres]`, the CLI loads but the first command that touches the database fails with a clear error pointing to the missing driver. The error is intentional and descriptive — not a bug.
+> If you `pip install driftbrake` without `[postgres]`, the CLI loads but the first command that touches the database fails with a clear error pointing to the missing driver. The error is intentional and descriptive, not a bug.
 
 ---
 </details>
